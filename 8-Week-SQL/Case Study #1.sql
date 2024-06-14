@@ -83,4 +83,38 @@ WHERE sales.order_date < members.join_date
 GROUP BY sales.customer_id
 
 9.
+SELECT sales.customer_id, SUM(product_point.point) AS customer_point
+FROM (SELECT menu.product_id, 
+          CASE
+              WHEN menu.product_id = 1 THEN price * 20
+              ELSE price * 10 END AS point
+      FROM 
+          dannys_diner.menu) AS product_point
+    INNER JOIN dannys_diner.sales ON sales.product_id = product_point.product_id
+GROUP BY sales.customer_id
+ORDER BY sales.customer_id
+
 10.
+SELECT sales.customer_id, SUM(
+	CASE
+  		WHEN sales.order_date <= member_date.valid_date THEN menu.price * 20
+  		WHEN menu.product_name = 'sushi' THEN menu.price * 20
+  		ELSE menu.price * 10 END
+	) AS customer_point
+FROM
+    (SELECT
+        m.customer_id,
+        m.join_date,
+        m.join_date + 6 AS valid_date,
+        DATE_TRUNC(
+            'month', '2021-01-31'::DATE)
+            + interval '1 month' 
+            - interval '1 day' AS last_date
+    FROM 
+        dannys_diner.members m) member_date
+    INNER JOIN dannys_diner.sales ON sales.customer_id = member_date.customer_id
+  	INNER JOIN dannys_diner.menu ON sales.product_id = menu.product_id
+WHERE 
+	sales.order_date >= member_date.join_date AND sales.order_date <= member_date.last_date
+GROUP BY sales.customer_id
+ORDER BY sales.customer_id

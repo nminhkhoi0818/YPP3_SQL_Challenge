@@ -104,3 +104,11 @@ INSERT INTO ChallengeGrading (ChallengeSubmissionID, MentorID, Status) VALUES
     (1, 1, 'Passed'),
     (2, 2, 'Failed'),
     (3, 1, 'Passed');
+    
+INSERT INTO ActivityLog (MenteeID, Activity, ActivityDate, Duration) VALUES
+(1, 'Completed Course: Introduction to Python', '2024-05-10 14:00:00', '3 hours'),
+(1, 'Attempted Quiz: JavaScript Basics', '2024-06-11 10:30:00', '30 minutes'),
+(1, 'Participated in Forum: Data Science Discussions', '2024-06-12 16:15:00', '45 minutes'),
+(1, 'Watched Video Lecture: Machine Learning', '2024-07-13 09:00:00', '1 hour 15 minutes'),
+(1, 'Submitted Assignment: Web Development Project', '2024-08-14 13:00:00', '2 hours'),
+(1, 'Completed Course: Advanced SQL', '2024-06-15 08:00:00', '4 hours');
