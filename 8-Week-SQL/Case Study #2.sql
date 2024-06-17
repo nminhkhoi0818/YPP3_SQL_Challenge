@@ -56,15 +56,23 @@ ORDER BY maximum_order DESC
 LIMIT 1
 
 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
--- SELECT
--- 	co.customer_id, COUNT(co.customer_id) AS no_change
--- FROM
--- 	pizza_runner.customer_orders co
--- WHERE co.exclusions != ' ' AND co.extras != ' '
--- GROUP BY
--- 	co.customer_id, co.pizza_id
--- ORDER BY
--- 	co.customer_id
+SELECT 
+	co.customer_id,
+    SUM(
+    	CASE WHEN co.exclusions NOT IN ('null', '') OR co.extras NOT IN ('null', '') THEN 1 ELSE 0 END 
+    ) AS at_least_1_change,
+    SUM(
+    	CASE WHEN co.exclusions IN ('null', '') AND (co.extras IN ('null', '') OR co.extras IS NULL) THEN 1 ELSE 0 END 
+    ) AS no_change
+FROM 
+	pizza_runner.customer_orders co
+    INNER JOIN pizza_runner.runner_orders ro ON co.order_id = ro.order_id
+WHERE 
+	ro.duration != 'null'
+GROUP BY 
+	co.customer_id
+ORDER BY 
+	co.customer_id
 
 8. How many pizzas were delivered that had both exclusions and extras?
 SELECT COUNT(*) as pizza_exclustion_extra
@@ -83,27 +91,10 @@ GROUP BY DATE_PART('hour', co.order_time)
 ORDER BY hour
 
 10. What was the volume of orders for each day of the week?
-
-B. Runner and Customer Experience
-
-1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
--- SELECT
--- 	DATE_PART('week', runners.registration_date),
---     COUNT(runner_id)
--- FROM
--- 	pizza_runner.runners
--- GROUP BY 
--- 	DATE_PART('week', runners.registration_date)
-    
-2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
-
-
-3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
-
-4. What was the average distance travelled for each customer?
-
-5. What was the difference between the longest and shortest delivery times for all orders?
-
-6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
-
-7. What is the successful delivery percentage for each runner?
+SELECT
+	TO_CHAR(order_time, 'Day'),
+    COUNT(order_id) AS total_pizza
+FROM 
+	pizza_runner.customer_orders
+GROUP BY 
+	TO_CHAR(order_time, 'Day')

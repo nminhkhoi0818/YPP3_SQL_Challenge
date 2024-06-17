@@ -37,27 +37,46 @@ WHERE
    p.plan_id = 4;
    
 5.
-
-6.
-WITH subscription_rank AS
+WITH customer_sub_table AS
     (SELECT
-        s.customer_id,
-     	p.plan_id,
+        customer_id,
+        plan_id,
         ROW_NUMBER() OVER(
-            PARTITION BY s.customer_id
-            ORDER BY s.start_date
-        ) AS rank_row
-    FROM
-        foodie_fi.plans p
-        INNER JOIN foodie_fi.subscriptions s ON p.plan_id = s.plan_id)
+            PARTITION BY customer_id
+        ) AS customer_sub_rank
+    FROM 
+        foodie_fi.subscriptions)
+        
+SELECT COUNT (*) AS churn_count, 
+	100 * COUNT (*) / (
+  		SELECT COUNT (DISTINCT customer_id)
+  		FROM foodie_fi.subscriptions
+	) AS churn_percentage
+FROM customer_sub_table
+WHERE plan_id = 4 AND customer_sub_rank = 2
 
-SELECT COUNT(DISTINCT sr.customer_id) AS churned_free_trial_count,
-	ROUND(100 * COUNT(sr.customer_id) / (
-   		SELECT COUNT(DISTINCT customer_id)
-     	FROM foodie_fi.subscriptions
-   ), 1) AS churned_free_trial_percentage
-FROM subscription_rank sr
-WHERE sr.rank_row = 2 AND sr.plan_id = 4
+6. What is the number and percentage of customer plans after their initial free trial?
+WITH customer_plans AS
+    (SELECT 
+        customer_id, 
+        plan_id, 
+        LEAD(plan_id) OVER (
+            PARTITION BY customer_id
+        ) AS next_plan
+    FROM 
+        foodie_fi.subscriptions)
+        
+        
+SELECT 
+	next_plan,
+    COUNT(next_plan) AS next_plan_count,
+    ROUND((100 * COUNT(next_plan) / (SELECT COUNT (DISTINCT customer_id) FROM foodie_fi.subscriptions)), 2)
+FROM 
+	customer_plans
+WHERE 
+	plan_id = 0
+GROUP BY
+	next_plan
 
 7.
 WITH customer_current_plan AS
@@ -92,7 +111,74 @@ WHERE
 	plan_id = 3 AND start_date >= '2020-01-01' AND start_date <= '2020-12-31'
 
 9.
+WITH free_trial_table AS 
+    (SELECT
+        customer_id, 
+        start_date AS free_trial_date
+    FROM 
+        foodie_fi.subscriptions
+    WHERE 
+        plan_id = 0),
+    annual_table AS 
+    (SELECT
+        customer_id, 
+        start_date AS annual_date
+    FROM 
+        foodie_fi.subscriptions
+    WHERE 
+        plan_id = 3)
+        
+SELECT 
+	AVG(annual_date - free_trial_date)
+FROM 
+	free_trial_table ftt
+    INNER JOIN annual_table ant ON ftt.customer_id = ant.customer_id
 
 10.
+WITH free_trial_table AS 
+    (SELECT
+        customer_id, 
+        start_date AS free_trial_date
+    FROM 
+        foodie_fi.subscriptions
+    WHERE 
+        plan_id = 0),
+    annual_table AS 
+    (SELECT
+        customer_id, 
+        start_date AS annual_date
+    FROM 
+        foodie_fi.subscriptions
+    WHERE 
+        plan_id = 3)
 
+SELECT period_count_table.period_count, COUNT(period_count_table.period_count)
+FROM (SELECT 
+	WIDTH_BUCKET(ant.annual_date - ftt.free_trial_date, 0, 365, 12) AS period_count
+FROM 
+	free_trial_table ftt
+    INNER JOIN annual_table ant ON ftt.customer_id = ant.customer_id) period_count_table
+GROUP BY
+	period_count_table.period_count
+
+11.
+WITH lead_subscription_table AS
+    (SELECT
+        customer_id, 
+        plan_id,
+        LEAD(plan_id) OVER(
+            PARTITION BY (customer_id)
+          	ORDER BY start_date
+        ) AS next_plan
+    FROM 
+        foodie_fi.subscriptions
+    WHERE 
+    	start_date <= '2020-12-31')
+
+SELECT
+	COUNT (*)
+FROM 
+	lead_subscription_table
+WHERE
+	plan_id = 2 AND next_plan = 1 
 
