@@ -11,15 +11,18 @@ FROM dannys_diner.sales
 GROUP BY sales.customer_id
 
 3.
-SELECT rank.customer_id, menu.product_name
-FROM (SELECT sales.customer_id, sales.product_id, RANK() OVER (
-	PARTITION BY sales.customer_id
-  	ORDER BY sales.order_date
-)
-FROM dannys_diner.sales) rank
-	INNER JOIN dannys_diner.menu ON menu.product_id = rank.product_id
-WHERE rank.rank = 1
-GROUP BY rank.customer_id, menu.product_name
+SELECT customer_id, menu.product_name
+FROM 
+    (SELECT
+        customer_id,
+        product_id,
+        ROW_NUMBER() OVER(
+            PARTITION BY customer_id
+        ) AS product_order
+    FROM
+        dannys_diner.sales) customer_product
+    INNER JOIN dannys_diner.menu ON customer_product.product_id = menu.product_id
+WHERE customer_product.product_order = 1
 
 4. 
 SELECT sales.product_id, COUNT(sales.product_id) AS most_purchased

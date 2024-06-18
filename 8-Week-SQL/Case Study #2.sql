@@ -82,13 +82,14 @@ FROM
 WHERE duration <> 'null' AND exclusions NOT IN ('', 'null') AND extras NOT IN ('', 'null')
 
 9. What was the total volume of pizzas ordered for each hour of the day?
-SELECT 
-	DATE_PART('hour', co.order_time) AS hour, 
+SELECT 	
+	TO_CHAR(co.order_time, 'HH24') AS order_hour, 
 	COUNT(co.order_id) AS pizza_count
 FROM
 	pizza_runner.customer_orders co
-GROUP BY DATE_PART('hour', co.order_time)
-ORDER BY hour
+GROUP BY 
+	TO_CHAR(co.order_time, 'HH24')
+ORDER BY order_hour
 
 10. What was the volume of orders for each day of the week?
 SELECT
@@ -98,3 +99,74 @@ FROM
 	pizza_runner.customer_orders
 GROUP BY 
 	TO_CHAR(order_time, 'Day')
+
+B. Runner and Customer Experience
+
+1.
+SELECT
+	TO_CHAR(registration_date, 'W') AS week, 
+    COUNT(runner_id) AS week_count
+FROM 
+	pizza_runner.runners
+GROUP BY 
+	TO_CHAR(registration_date, 'W')
+ORDER BY
+	TO_CHAR(registration_date, 'W')
+
+2.
+WITH time_taken_cte AS (
+  SELECT 
+    c.order_id, 
+    c.order_time::timestamp, 
+    r.pickup_time::timestamp, 
+    EXTRACT(EPOCH FROM (r.pickup_time::timestamp - c.order_time::timestamp)) / 60 AS pickup_minutes
+  FROM pizza_runner.customer_orders c
+  INNER JOIN pizza_runner.runner_orders r
+    ON c.order_id = r.order_id
+  WHERE r.distance != 'null'
+  GROUP BY c.order_id, c.order_time, r.pickup_time
+)
+
+SELECT 
+  AVG(pickup_minutes) AS avg_pickup_minutes
+FROM time_taken_cte
+
+3.
+WITH time_taken_cte AS (
+  SELECT 
+    c.order_id, 
+    c.order_time::timestamp, 
+    r.pickup_time::timestamp, 
+  	COUNT(c.order_id) AS pizza_order,
+    EXTRACT(EPOCH FROM (r.pickup_time::timestamp - c.order_time::timestamp)) / 60 AS pickup_minutes
+  FROM pizza_runner.customer_orders c
+  INNER JOIN pizza_runner.runner_orders r
+    ON c.order_id = r.order_id
+  WHERE r.distance != 'null'
+  GROUP BY c.order_id, c.order_time, r.pickup_time
+)
+
+SELECT 
+	pizza_order, AVG(pickup_minutes)
+FROM time_taken_cte
+GROUP BY 
+	pizza_order
+ORDER BY 
+	pizza_order
+
+4.
+
+5.
+SELECT  
+	(MAX(duration_minutes)::INT - MIN(duration_minutes)::INT) AS different_delivery_time 
+FROM 
+    (SELECT
+        TRIM('minutes' from duration) AS duration_minutes
+    FROM
+        pizza_runner.runner_orders
+    WHERE 
+        duration != 'null') AS filter_duration
+
+6.
+
+7.

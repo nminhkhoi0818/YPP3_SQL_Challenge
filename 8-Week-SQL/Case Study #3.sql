@@ -1,24 +1,27 @@
-1. 
-SELECT 
-	COUNT(DISTINCT subscriptions.customer_id)
-FROM 
-	foodie_fi.subscriptions
+B. Data Analysis Questions
 
+1. 
+SELECT COUNT(DISTINCT customer_id)
+FROM foodie_fi.subscriptions
 2.
 SELECT 
-	DATE_PART('month', s.start_date), COUNT(s.customer_id)
-FROM
-	foodie_fi.subscriptions s
-WHERE
-	s.plan_id = 0
-GROUP BY DATE_PART('month', s.start_date)
+	TO_CHAR(start_date, 'Month'), COUNT(DISTINCT customer_id)
+FROM 
+	foodie_fi.subscriptions
+WHERE 
+	plan_id = 0
+GROUP BY 
+	TO_CHAR(start_date, 'Month')
+
 
 3.
-SELECT p.plan_name, COUNT(p.plan_name) AS events
-FROM 
+SELECT
+	p.plan_name,
+    COUNT(DISTINCT s.customer_id)
+FROM
 	foodie_fi.subscriptions s
-    INNER JOIN foodie_fi.plans p ON s.plan_id = p.plan_id
-WHERE
+    INNER JOIN foodie_fi.plans p ON s.plan_id = p.plan_id 
+WHERE 
 	s.start_date >= '2021-01-01'
 GROUP BY 
 	p.plan_name
@@ -181,4 +184,3 @@ FROM
 	lead_subscription_table
 WHERE
 	plan_id = 2 AND next_plan = 1 
-
