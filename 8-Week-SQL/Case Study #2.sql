@@ -102,7 +102,7 @@ GROUP BY
 
 B. Runner and Customer Experience
 
-1.
+1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
 SELECT
 	TO_CHAR(registration_date, 'W') AS week, 
     COUNT(runner_id) AS week_count
@@ -113,7 +113,7 @@ GROUP BY
 ORDER BY
 	TO_CHAR(registration_date, 'W')
 
-2.
+2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
 WITH time_taken_cte AS (
   SELECT 
     c.order_id, 
@@ -131,7 +131,7 @@ SELECT
   AVG(pickup_minutes) AS avg_pickup_minutes
 FROM time_taken_cte
 
-3.
+3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
 WITH time_taken_cte AS (
   SELECT 
     c.order_id, 
@@ -154,9 +154,9 @@ GROUP BY
 ORDER BY 
 	pizza_order
 
-4.
+-- 4. Is there any relationship between the number of pizzas and how long the order takes to prepare?
 
-5.
+5. What was the difference between the longest and shortest delivery times for all orders?
 SELECT  
 	(MAX(duration_minutes)::INT - MIN(duration_minutes)::INT) AS different_delivery_time 
 FROM 
@@ -167,6 +167,15 @@ FROM
     WHERE 
         duration != 'null') AS filter_duration
 
-6.
+6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
 
-7.
+7. What is the successful delivery percentage for each runner?
+
+C. Ingredient Optimisation
+
+1. What are the standard ingredients for each pizza?
+
+2. What was the most commonly added extra?
+
+3. What was the most common exclusion?
+

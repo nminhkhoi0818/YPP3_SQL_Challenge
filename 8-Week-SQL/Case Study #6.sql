@@ -1,10 +1,10 @@
-1.
+1. How many users are there?
 SELECT
 	COUNT(DISTINCT user_id) 
 FROM 
 	clique_bait.users
 
-2.
+2. How many cookies does each user have on average?
 WITH cookie_count_table AS
     (SELECT
         user_id, COUNT(DISTINCT cookie_id) AS cookie_count
@@ -16,7 +16,7 @@ WITH cookie_count_table AS
 SELECT AVG(cookie_count)
 FROM cookie_count_table
 
-3.
+3. What is the unique number of visits by all users per month?
 SELECT
 	TO_CHAR(event_time, 'Month'), COUNT(DISTINCT visit_id)
 FROM
@@ -24,7 +24,7 @@ FROM
 GROUP BY 
 	TO_CHAR(event_time, 'Month')
 
-4. 
+4. What is the number of events for each event type?
 SELECT 
 	event_type, COUNT(visit_id)
 FROM 
@@ -34,7 +34,7 @@ GROUP BY
 ORDER BY
 	event_type
 
-5.
+5. What is the percentage of visits which have a purchase event?
 SELECT
 	100 * COUNT(DISTINCT visit_id) / (SELECT COUNT(DISTINCT visit_id) FROM clique_bait.events) AS purchase_event_percentage
 FROM
@@ -43,7 +43,7 @@ FROM
 WHERE 
 	ei.event_name = 'Purchase'
 
-6.
+6. What is the percentage of visits which view the checkout page but do not have a purchase event? The strategy to answer this question is to breakdown the question into 2 parts.
 WITH view_checkout_purchase_cte AS
 	(SELECT
 		visit_id,
@@ -85,3 +85,48 @@ FROM
 WHERE product_category IS NOT NULL
 GROUP BY
 	product_category
+
+B. Product Funnel Analysis
+
+WITH view_cart_cte AS
+	(SELECT
+		e.visit_id,
+		ph.product_id, 
+		ph.page_name AS product_name,
+		SUM(CASE WHEN ei.event_name = 'Page View' THEN 1 ELSE 0 END) AS total_view,
+		SUM(CASE WHEN ei.event_name = 'Add to Cart' THEN 1 ELSE 0 END) AS total_cart
+	FROM
+		clique_bait.events e
+		INNER JOIN clique_bait.event_identifier ei ON e.event_type = ei.event_type
+		INNER JOIN clique_bait.page_hierarchy ph ON ph.page_id = e.page_id
+	WHERE
+		ph.product_id IS NOT NULL
+	GROUP BY
+		e.visit_id, ph.product_id, ph.page_name),
+
+purchase_cte AS
+	(SELECT 	
+		DISTINCT visit_id
+	FROM 
+		clique_bait.events
+	WHERE 
+		event_type = 3),
+		
+purchase_product_cte AS 
+	(SELECT 
+	 	*,
+		(CASE WHEN pc.visit_id IS NOT NULL THEN 1 ELSE 0 END) AS total_purchase 
+	FROM
+		view_cart_cte vcc
+		LEFT JOIN purchase_cte pc ON vcc.visit_id = pc.visit_id)
+	
+SELECT
+	product_id,
+	product_name,
+	SUM(total_view) AS total_view,
+	SUM(total_cart) AS total_cart,
+	SUM(CASE WHEN total_cart = 1 AND total_purchase = 0 THEN 1 ELSE 0 END) AS total_abandon,
+	SUM(CASE WHEN total_cart = 1 AND total_purchase = 1 THEN 1 ELSE 0 END) AS total_purchase
+FROM purchase_product_cte
+GROUP BY
+	product_id, product_name
