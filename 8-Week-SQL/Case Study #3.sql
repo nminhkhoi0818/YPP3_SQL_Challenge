@@ -156,7 +156,9 @@ WITH free_trial_table AS
     WHERE 
         plan_id = 3)
 
-SELECT period_count_table.period_count, COUNT(period_count_table.period_count)
+SELECT 
+	period_count_table.period_count, 
+	COUNT(period_count_table.period_count) AS customers_count
 FROM (SELECT 
 	WIDTH_BUCKET(ant.annual_date - ftt.free_trial_date, 0, 365, 12) AS period_count
 FROM 
@@ -164,6 +166,8 @@ FROM
     INNER JOIN annual_table ant ON ftt.customer_id = ant.customer_id) period_count_table
 GROUP BY
 	period_count_table.period_count
+ORDER BY
+	period_count
 
 11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
 WITH lead_subscription_table AS

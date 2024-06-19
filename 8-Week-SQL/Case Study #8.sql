@@ -1,6 +1,8 @@
 A. Data Exploration and Cleansing
 
 1. Update the fresh_segments.interest_metrics table by modifying the month_year column to be a date data type with the start of the month
+ALTER TABLE fresh_segments.interest_metrics
+ALTER month_year TYPE DATE USING month_year::DATE;
 
 2. What is count of records in the fresh_segments.interest_metrics for each month_year value sorted in chronological order (earliest to latest) with the null values appearing first?
 SELECT 
