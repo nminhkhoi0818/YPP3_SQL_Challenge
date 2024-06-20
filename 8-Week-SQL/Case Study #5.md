@@ -29,7 +29,7 @@ FROM data_mart.weekly_sales
 
 ## B. Data Exploration
 
-1. What day of the week is used for each week_date value?
+**1. What day of the week is used for each week_date value?**
 
 ```sql
 SELECT
@@ -38,7 +38,7 @@ FROM
 	clean_weekly_sales
 ```
 
-2. What range of week numbers are missing from the dataset?
+**2. What range of week numbers are missing from the dataset?**
 
 ```sql
 SELECT
@@ -51,7 +51,7 @@ WHERE
 	cws.week_number IS NULL
 ```
 
-3. How many total transactions were there for each year in the dataset?
+**3. How many total transactions were there for each year in the dataset?**
 
 ```sql
 SELECT
@@ -64,7 +64,7 @@ ORDER BY
 	calendar_year
 ```
 
-4. What is the total sales for each region for each month?
+**4. What is the total sales for each region for each month?**
 
 ```sql
 SELECT
@@ -77,7 +77,7 @@ ORDER BY
 	month_number, region
 ```
 
-5. What is the total count of transactions for each platform?
+**5. What is the total count of transactions for each platform?**
 
 ```sql
 SELECT
@@ -88,7 +88,7 @@ GROUP BY
 	platform
 ```
 
-6. What is the percentage of sales for Retail vs Shopify for each month? (Hàm MAX giúp không cần gọi table name ở GROUP BY)
+**6. What is the percentage of sales for Retail vs Shopify for each month?**
 
 ```sql
 WITH month_sales_table AS
@@ -105,7 +105,7 @@ FROM month_sales_table
 GROUP BY month_number, calendar_year
 ```
 
-7. What is the percentage of sales by demographic for each year in the dataset?
+**7. What is the percentage of sales by demographic for each year in the dataset?**
 
 ```sql
 WITH sales_year_table AS
@@ -121,7 +121,7 @@ FROM sales_year_table
 GROUP BY calendar_year
 ```
 
-8. Which age_band and demographic values contribute the most to Retail sales?
+**8. Which age_band and demographic values contribute the most to Retail sales?**
 
 ```sql
 SELECT
@@ -134,7 +134,7 @@ GROUP BY
 	age_band, demographic
 ```
 
-9. Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+**9. Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?**
 
 ```sql
 SELECT
@@ -151,7 +151,7 @@ ORDER BY
 
 ## C. Before & After Analysis
 
-1. What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in actual values and percentage of sales?
+**1. What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in actual values and percentage of sales?**
 
 ```sql
 SELECT
@@ -172,7 +172,7 @@ WHERE
 	calendar_year = 2020
 ```
 
-2. What about the entire 12 weeks before and after?
+**2. What about the entire 12 weeks before and after?**
 
 ```sql
 SELECT
@@ -184,7 +184,7 @@ WHERE
 	calendar_year = 2020
 ```
 
-3. How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?
+**3. How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?**
 
 ```sql
 SELECT

@@ -1,5 +1,3 @@
-https://www.db-fiddle.com/f/7VcQKQwsS3CTkGRFG7vu98/65
-
 ## Data Cleansing
 
 ```sql
@@ -57,7 +55,7 @@ ALTER COLUMN duration TYPE INT;
 
 ## A. Pizza Metrics
 
-1. How many pizzas were ordered?
+**1. How many pizzas were ordered?**
 
 ```sql
 SELECT COUNT(pizza_id)
@@ -72,7 +70,7 @@ FROM
 	customer_orders_temp
 ```
 
-2. How many unique customer orders were made?
+**2. How many unique customer orders were made?**
 
 ```sql
 SELECT
@@ -88,7 +86,7 @@ FROM
 	customer_orders_temp
 ```
 
-3. How many successful orders were delivered by each runner?
+**3. How many successful orders were delivered by each runner?**
 
 ```sql
 SELECT runner_id, COUNT(order_id)
@@ -111,7 +109,7 @@ GROUP BY
 	runner_id
 ```
 
-4. How many of each type of pizza was delivered?
+**4. How many of each type of pizza was delivered?**
 
 ```sql
 SELECT
@@ -139,7 +137,7 @@ GROUP BY
 	pizza_name
 ```
 
-5. How many Vegetarian and Meatlovers were ordered by each customer?\*\*
+**5. How many Vegetarian and Meatlovers were ordered by each customer?**
 
 ```sql
 SELECT
@@ -166,7 +164,7 @@ GROUP BY
 	customer_id
 ```
 
-6. What was the maximum number of pizzas delivered in a single order?
+**6. What was the maximum number of pizzas delivered in a single order?**
 
 ```sql
 SELECT
@@ -194,7 +192,7 @@ ORDER BY
 LIMIT 1
 ```
 
-7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+**7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?**
 
 ```sql
 SELECT
@@ -230,7 +228,7 @@ GROUP BY
 	cot.customer_id
 ```
 
-8. How many pizzas were delivered that had both exclusions and extras?
+**8. How many pizzas were delivered that had both exclusions and extras?**
 
 ```sql
 SELECT COUNT(*) as pizza_exclustion_extra
@@ -240,7 +238,7 @@ FROM
 WHERE duration <> 'null' AND exclusions NOT IN ('', 'null') AND extras NOT IN ('', 'null')
 ```
 
-9. What was the total volume of pizzas ordered for each hour of the day?
+**9. What was the total volume of pizzas ordered for each hour of the day?**
 
 ```sql
 SELECT
@@ -253,7 +251,7 @@ GROUP BY
 ORDER BY order_hour
 ```
 
-10. What was the volume of orders for each day of the week?
+**10. What was the volume of orders for each day of the week?**
 
 ```sql
 SELECT
@@ -267,7 +265,7 @@ GROUP BY
 
 ## B. Runner and Customer Experience
 
-1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
+**1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)**
 
 ```sql
 SELECT
@@ -281,7 +279,7 @@ ORDER BY
 	TO_CHAR(registration_date, 'W')
 ```
 
-2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
+**2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?**
 
 ```sql
 WITH time_taken_cte AS (
@@ -302,7 +300,7 @@ SELECT
 FROM time_taken_cte
 ```
 
-3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
+**3. Is there any relationship between the number of pizzas and how long the order takes to prepare?**
 
 ```sql
 WITH time_taken_cte AS (
@@ -328,9 +326,9 @@ ORDER BY
 	pizza_order
 ```
 
-4. Is there any relationship between the number of pizzas and how long the order takes to prepare?
+**4. Is there any relationship between the number of pizzas and how long the order takes to prepare?**
 
-5. What was the difference between the longest and shortest delivery times for all orders?
+**5. What was the difference between the longest and shortest delivery times for all orders?**
 
 ```sql
 SELECT
@@ -344,7 +342,7 @@ FROM
         duration != 'null') AS filter_duration
 ```
 
-6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
+**6. What was the average speed for each runner for each delivery and do you notice any trend for these values?**
 
 ```sql
 SELECT
@@ -362,7 +360,7 @@ ORDER BY
 	rot.runner_id, cot.order_id
 ```
 
-7. What is the successful delivery percentage for each runner?
+**7. What is the successful delivery percentage for each runner?**
 
 ```sql
 SELECT
@@ -378,7 +376,7 @@ ORDER BY
 
 ## C. Ingredient Optimisation
 
-1. What are the standard ingredients for each pizza?
+**1. What are the standard ingredients for each pizza?**
 
 ```sql
 WITH pizza_toppings_cte AS
@@ -398,7 +396,7 @@ ORDER BY
 	ptc.pizza_id
 ```
 
-2. What was the most commonly added extra?
+**2. What was the most commonly added extra?**
 
 ```sql
 SELECT
@@ -412,7 +410,7 @@ ORDER BY
 	topping_count DESC
 ```
 
-3. What was the most common exclusion?
+**3. What was the most common exclusion?**
 
 ```sql
 WITH exclusions_cte AS
@@ -435,11 +433,7 @@ ORDER BY
 LIMIT 1
 ```
 
-4. Generate an order item for each record in the customers_orders table in the format of one of the following:
-   Meat Lovers
-   Meat Lovers - Exclude Beef
-   Meat Lovers - Extra Bacon
-   Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
+**4. Generate an order item for each record in the customers_orders table in the format of one of the following: Meat Lovers, Meat Lovers - Exclude Beef, Meat Lovers - Extra Bacon, Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers**
 
 ```sql
 WITH exclusions_cte AS
@@ -496,9 +490,11 @@ ORDER BY
 -- SET extras = CASE WHEN extras = ' ' AND extras = '' THEN NULL ELSE extras END
 ```
 
-5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients
-6. For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
-7. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
+**5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients**
+
+**6. For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"**
+
+**7. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?**
 
 ```sql
 WITH topping_cte AS

@@ -1,13 +1,13 @@
 ## B. Data Analysis Questions
 
-1. How many customers has Foodie-Fi ever had?
+**1. How many customers has Foodie-Fi ever had?**
 
 ```sql
 SELECT COUNT(DISTINCT customer_id)
 FROM foodie_fi.subscriptions
 ```
 
-2. What is the monthly distribution of trial plan start_date values for our dataset - use the start of the month as the group by value
+**2. What is the monthly distribution of trial plan start_date values for our dataset - use the start of the month as the group by value**
 
 ```sql
 SELECT
@@ -20,7 +20,7 @@ GROUP BY
 	TO_CHAR(start_date, 'Month')
 ```
 
-3. What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name.
+**3. What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name.**
 
 ```sql
 SELECT
@@ -35,7 +35,7 @@ GROUP BY
 	p.plan_name
 ```
 
-4. What is the customer count and percentage of customers who have churned rounded to 1 decimal place?
+**4. What is the customer count and percentage of customers who have churned rounded to 1 decimal place?**
 
 ```sql
 SELECT
@@ -51,7 +51,7 @@ WHERE
    p.plan_id = 4;
 ```
 
-5. How many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?
+**5. How many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?**
 
 ```sql
 WITH customer_sub_table AS
@@ -73,7 +73,7 @@ FROM customer_sub_table
 WHERE plan_id = 4 AND customer_sub_rank = 2
 ```
 
-6. What is the number and percentage of customer plans after their initial free trial?
+**6. What is the number and percentage of customer plans after their initial free trial?**
 
 ```sql
 WITH customer_plans AS
@@ -99,7 +99,7 @@ GROUP BY
 	next_plan
 ```
 
-7. What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?
+**7. What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?**
 
 ```sql
 WITH customer_current_plan AS
@@ -126,7 +126,7 @@ GROUP BY
 	ccp.plan_id;
 ```
 
-8. How many customers have upgraded to an annual plan in 2020?
+**8. How many customers have upgraded to an annual plan in 2020?**
 
 ```sql
 SELECT
@@ -137,7 +137,7 @@ WHERE
 	plan_id = 3 AND start_date >= '2020-01-01' AND start_date <= '2020-12-31'
 ```
 
-9. How many days on average does it take for a customer to upgrade to an annual plan from the day they join Foodie-Fi?
+**9. How many days on average does it take for a customer to upgrade to an annual plan from the day they join Foodie-Fi?**
 
 ```sql
 WITH free_trial_table AS
@@ -164,7 +164,7 @@ FROM
     INNER JOIN annual_table ant ON ftt.customer_id = ant.customer_id
 ```
 
-10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
+**10. Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)**
 
 ```sql
 WITH free_trial_table AS
@@ -198,7 +198,7 @@ ORDER BY
 	period_count
 ```
 
-11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
+**11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?**
 
 ```sql
 WITH lead_subscription_table AS

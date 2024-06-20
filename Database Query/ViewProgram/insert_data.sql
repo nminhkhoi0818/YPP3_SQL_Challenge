@@ -16,16 +16,15 @@ CREATE TABLE Program (
   	Price Float
 );
 
-CREATE TABLE ReviewProgram (
-    ID SERIAL PRIMARY KEY,
-    ProgramID INT REFERENCES Program(ID),
+CREATE TABLE Review (
+    SourceID INT,
     MenteeID INT REFERENCES Mentee(ID),
     RatingStar FLOAT NOT NULL,
-    Content VARCHAR
+    Content VARCHAR,
+  	SourceType VARCHAR
 );
 
-CREATE TABLE ProgramProgress (
-    ID SERIAL PRIMARY KEY,
+CREATE TABLE MenteeProgram (
     ProgramID INT REFERENCES Program(ID),
     MenteeID INT REFERENCES Mentee(ID),
     ProgressPercent FLOAT,
@@ -37,18 +36,35 @@ CREATE TABLE Category (
     Name VARCHAR NOT NULL
 );
 
-CREATE TABLE ProgramCategory (
+CREATE TABLE CategoryProgram (
     ProgramID INT REFERENCES Program(ID),
     CategoryID INT REFERENCES Category(ID),
     PRIMARY KEY (ProgramID, CategoryID)
 );
 
-CREATE TABLE MenteeActivity (
+CREATE TABLE EventIdentifier (
+  ID SERIAL PRIMARY KEY,
+  EventName VARCHAR(13)
+);
+
+CREATE TABLE MenteeEventLog (
     ID SERIAL PRIMARY KEY,
     MenteeID INT REFERENCES Mentee(ID),
-    ProgramID INT REFERENCES Program(ID),
-    LastActivity TIMESTAMP NOT NULL
+    SourceID INT,
+  	SourceType VARCHAR,
+  	EventIndentifierID INT REFERENCES EventIdentifier(ID),
+    EventTime TIMESTAMP NOT NULL
 );
+
+INSERT INTO EventIdentifier
+  (ID, EventName)
+VALUES
+  (1, 'Page View'),
+  (2, 'Add to Cart'),
+  (3, 'Purchase'),
+  (4, 'Ad Impression'),
+  (5, 'Ad Click');
+
 
 INSERT INTO Mentor (ID, Name) VALUES
 (1, 'Alice Johnson'),
@@ -71,7 +87,7 @@ INSERT INTO Program (ID, MentorID, Name, Description, Price) VALUES
 (4, 4, 'Mentoring Hub', 'Personalized professional growth through mentorship', 19.99),
 (5, 5, 'Digital Marketing Bootcamp', 'Comprehensive training in digital marketing strategies and tools', 99.99);
 
-INSERT INTO ProgramProgress (ProgramID, MenteeID, ProgressPercent, Status) VALUES
+INSERT INTO MenteeProgram (ProgramID, MenteeID, ProgressPercent, Status) VALUES
     (1, 1, 50.0, 'In Progress'),
     (2, 1, 30.0, 'In Progress'),
     (3, 1, 80.0, 'Completed'),
@@ -85,18 +101,34 @@ INSERT INTO Category (ID, Name) VALUES
 (4, 'Professional Growth'),
 (5, 'Digital Marketing');
 
-INSERT INTO ProgramCategory (ProgramID, CategoryID) VALUES
+INSERT INTO CategoryProgram (ProgramID, CategoryID) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
 (4, 4),
 (5, 5);
 
-INSERT INTO MenteeActivity (MenteeID, ProgramID, LastActivity) VALUES
-(1, 1, '2024-06-01 10:00:00'),
-(1, 3, '2024-06-10 15:00:00'),
-(2, 2, '2024-06-05 12:00:00'),
-(3, 4, '2024-06-07 18:00:00'),
-(4, 5, '2024-06-09 20:00:00');
+INSERT INTO Review (SourceID, MenteeID, RatingStar, Content, SourceType) VALUES
+(2, 1, 4.5, 'Excellent tool for tracking environmental impact.', 'Program'),
+(3, 2, 4.0, 'Very helpful for managing patient records.', 'Program'),
+
+(4, 4, 4.2, 'Useful for financial planning.', 'Program'),
+(5, 5, 4.7, 'Perfect place to showcase handmade products.', 'Program'),
+(1, 1, 4.5, 'Very insightful introduction to quantum computing.', 'Challenge'),
+(2, 2, 4.0, 'Comprehensive digital marketing strategies.', 'Challenge'),
+(1, 3, 4.8, 'Great exercises and peer reviews.', 'Challenge'),
+(2, 4, 4.2, 'Good coverage of data science techniques.', 'Challenge'),
+(2, 5, 4.7, 'Excellent culinary skills development.', 'Challenge'),
+(2, 1, 4.5, 'Challenging yet rewarding.', 'Course'),
+(2, 2, 4.0, 'Learned a lot about social media marketing.', 'Course'),
+(2, 3, 4.8, 'Fun and engaging short story writing tasks.', 'Course'),
+(1, 4, 4.2, 'Useful for improving data prediction skills.', 'Course'),
+(1, 5, 4.7, 'Inspired me to create new recipes.', 'Course');
 
 
+INSERT INTO MenteeEventLog (MenteeID, SourceID, SourceType, EventIndentifierID, EventTime) VALUES
+(1, 1, 'Program', 1, '2024-06-01 10:00:00'),
+(1, 2, 'Program', 2, '2024-06-10 15:00:00'),
+(1, 2, 'Program', 3, '2024-06-05 12:00:00'),
+(1, 3, 'Course', 1, '2024-06-07 18:00:00'),
+(1, 4, 'Challenge', 1, '2024-06-09 20:00:00');

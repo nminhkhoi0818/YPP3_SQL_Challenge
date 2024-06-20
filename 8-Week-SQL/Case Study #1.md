@@ -1,4 +1,4 @@
-1. What is the total amount each customer spent at the restaurant?
+**1. What is the total amount each customer spent at the restaurant?**
 
 ```sql
 SELECT sales.customer_id, SUM(menu.price)
@@ -8,7 +8,7 @@ GROUP BY sales.customer_id
 ORDER BY sales.customer_id
 ```
 
-2. How many days has each customer visited the restaurant?
+**2. How many days has each customer visited the restaurant?**
 
 ```sql
 SELECT sales.customer_id, COUNT(DISTINCT sales.order_date)
@@ -16,7 +16,7 @@ FROM dannys_diner.sales
 GROUP BY sales.customer_id
 ```
 
-3. What was the first item from the menu purchased by each customer?
+**3. What was the first item from the menu purchased by each customer?**
 
 ```sql
 SELECT customer_id, menu.product_name
@@ -33,7 +33,7 @@ FROM
 WHERE customer_product.product_order = 1
 ```
 
-4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+**4. What is the most purchased item on the menu and how many times was it purchased by all customers?**
 
 ```sql
 SELECT sales.product_id, COUNT(sales.product_id) AS most_purchased
@@ -44,7 +44,7 @@ ORDER BY most_purchased DESC
 LIMIT 1;
 ```
 
-5. Which item was the most popular for each customer?
+**5. Which item was the most popular for each customer?**
 
 ```sql
 SELECT
@@ -60,7 +60,7 @@ SELECT
   GROUP BY sales.customer_id, menu.product_name
 ```
 
-6. Which item was purchased first by the customer after they became a member?
+**6. Which item was purchased first by the customer after they became a member?**
 
 ```sql
 SELECT rank.customer_id, menu.product_name
@@ -80,7 +80,7 @@ FROM (SELECT
 WHERE rank.rank = 1
 ```
 
-7. Which item was purchased just before the customer became a member?
+**7. Which item was purchased just before the customer became a member?**
 
 ```sql
 SELECT rank.customer_id, menu.product_name
@@ -95,7 +95,7 @@ WHERE sales.order_date < members.join_date) rank
 WHERE rank.rank = 1
 ```
 
-8. What is the total items and amount spent for each member before they became a member?
+**8. What is the total items and amount spent for each member before they became a member?**
 
 ```sql
 SELECT sales.customer_id,
@@ -109,7 +109,7 @@ WHERE sales.order_date < members.join_date
 GROUP BY sales.customer_id
 ```
 
-9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier — how many points would each customer have?
+**9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier — how many points would each customer have?**
 
 ```sql
 SELECT sales.customer_id, SUM(product_point.point) AS customer_point
@@ -124,7 +124,7 @@ GROUP BY sales.customer_id
 ORDER BY sales.customer_id
 ```
 
-10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi — how many points do customer A and B have at the end of January?
+**10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi — how many points do customer A and B have at the end of January?**
 
 ```sql
 SELECT sales.customer_id, SUM(

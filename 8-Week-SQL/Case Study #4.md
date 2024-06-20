@@ -1,13 +1,13 @@
 ## A. Customer Nodes Exploration
 
-1. How many unique nodes are there on the Data Bank system?
+**1. How many unique nodes are there on the Data Bank system?**
 
 ```sql
 SELECT COUNT(DISTINCT node_id)
 FROM data_bank.customer_nodes
 ```
 
-2. What is the number of nodes per region?
+**2. What is the number of nodes per region?**
 
 ```sql
 SELECT region_id, COUNT(DISTINCT node_id)
@@ -15,7 +15,7 @@ FROM data_bank.customer_nodes
 GROUP BY region_id
 ```
 
-3. How many customers are allocated to each region?
+**3. How many customers are allocated to each region?**
 
 ```sql
 SELECT region_id, COUNT(customer_id)
@@ -24,7 +24,9 @@ GROUP BY region_id
 ORDER BY region_id
 ```
 
-4. How many days on average are customers reallocated to a different node? (Khi kết thúc một node thì có 2 trường hợp là tiếp tục ở node đó hoặc reallocate sang node khác, vì vậy mà cần phải GROUP BY theo customer_id và node_id)
+**4. How many days on average are customers reallocated to a different node?**
+
+- Khi kết thúc một node thì có 2 trường hợp là tiếp tục ở node đó hoặc reallocate sang node khác, vì vậy mà cần phải GROUP BY theo customer_id và node_id
 
 ```sql
 WITH date_node AS
@@ -45,11 +47,11 @@ SELECT AVG(date_per_customer)
 FROM customer_date_node
 ```
 
-5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
+**5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?**
 
 ## B. Customer Transactions
 
-1. What is the unique count and total amount for each transaction type?
+**1. What is the unique count and total amount for each transaction type?**
 
 ```sql
 SELECT
@@ -62,7 +64,7 @@ GROUP BY
 	txn_type
 ```
 
-2. What is the average total historical deposit counts and amounts for all customers?
+**2. What is the average total historical deposit counts and amounts for all customers?**
 
 ```sql
 WITH deposit_table AS (
@@ -84,7 +86,7 @@ FROM
 	deposit_table
 ```
 
-3. For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month?
+**3. For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month?**
 
 ```sql
 WITH monthly_transactions AS (
@@ -107,6 +109,6 @@ GROUP BY month_name
 ORDER BY month_name;
 ```
 
-4. What is the closing balance for each customer at the end of the month?
+**4. What is the closing balance for each customer at the end of the month? Also show the change in balance each month in the same table output.**
 
-5. What is the percentage of customers who increase their closing balance by more than 5%?
+**5. What is the percentage of customers who increase their closing balance by more than 5%?**

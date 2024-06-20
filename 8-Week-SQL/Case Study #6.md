@@ -1,4 +1,4 @@
-1. How many users are there?
+**1. How many users are there?**
 
 ```sql
 SELECT
@@ -7,7 +7,7 @@ FROM
 	clique_bait.users
 ```
 
-2. How many cookies does each user have on average?
+**2. How many cookies does each user have on average?**
 
 ```sql
 WITH cookie_count_table AS
@@ -22,7 +22,7 @@ SELECT AVG(cookie_count)
 FROM cookie_count_table
 ```
 
-3. What is the unique number of visits by all users per month?
+**3. What is the unique number of visits by all users per month?**
 
 ```sql
 SELECT
@@ -33,7 +33,7 @@ GROUP BY
 	TO_CHAR(event_time, 'Month')
 ```
 
-4. What is the number of events for each event type?
+**4. What is the number of events for each event type?**
 
 ```sql
 SELECT
@@ -46,7 +46,7 @@ ORDER BY
 	event_type
 ```
 
-5. What is the percentage of visits which have a purchase event?
+**5. What is the percentage of visits which have a purchase event?**
 
 ```sql
 SELECT
@@ -58,7 +58,7 @@ WHERE
 	ei.event_name = 'Purchase'
 ```
 
-6. What is the percentage of visits which view the checkout page but do not have a purchase event? The strategy to answer this question is to breakdown the question into 2 parts.
+**6. What is the percentage of visits which view the checkout page but do not have a purchase event? The strategy to answer this question is to breakdown the question into 2 parts.**
 
 ```sql
 WITH view_checkout_purchase_cte AS
@@ -79,7 +79,7 @@ WHERE
 	view_checkout_count = 1 AND purchase_event_count = 0
 ```
 
-7. What are the top 3 pages by number of views?
+**7. What are the top 3 pages by number of views?**
 
 ```sql
 SELECT
@@ -95,7 +95,7 @@ ORDER BY
 LIMIT 3
 ```
 
-8. What is the number of views and cart adds for each product category?
+**8. What is the number of views and cart adds for each product category?**
 
 ```sql
 SELECT
