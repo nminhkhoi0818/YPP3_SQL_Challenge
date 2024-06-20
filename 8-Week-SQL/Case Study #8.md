@@ -1,4 +1,4 @@
-A. Data Exploration and Cleansing
+## A. Data Exploration and Cleansing
 
 1. Update the fresh_segments.interest_metrics table by modifying the month_year column to be a date data type with the start of the month
 
@@ -66,7 +66,7 @@ WHERE
 
 7. Are there any records in your joined table where the month_year value is before the created_at value from the fresh_segments.interest_map table? Do you think these values are valid and why?
 
-B. Interest Analysis
+## B. Interest Analysis
 
 1. Which interests have been present in all month_year dates in our dataset?
 

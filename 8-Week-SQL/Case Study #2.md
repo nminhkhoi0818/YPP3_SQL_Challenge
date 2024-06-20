@@ -1,6 +1,6 @@
 https://www.db-fiddle.com/f/7VcQKQwsS3CTkGRFG7vu98/65
 
-# Data Cleansing
+## Data Cleansing
 
 ```sql
 CREATE TEMP TABLE customer_orders_temp AS
@@ -55,7 +55,7 @@ ALTER TABLE runner_orders_temp
 ALTER COLUMN duration TYPE INT;
 ```
 
-A. Pizza Metrics
+## A. Pizza Metrics
 
 1. How many pizzas were ordered?
 
@@ -63,6 +63,13 @@ A. Pizza Metrics
 SELECT COUNT(pizza_id)
 FROM
     pizza_runner.customer_orders
+```
+
+```sql
+SELECT
+	*
+FROM
+	customer_orders_temp
 ```
 
 2. How many unique customer orders were made?
@@ -74,6 +81,13 @@ FROM
     pizza_runner.customer_orders
 ```
 
+```sql
+SELECT
+	COUNT(DISTINCT customer_id) AS customer_count
+FROM
+	customer_orders_temp
+```
+
 3. How many successful orders were delivered by each runner?
 
 ```sql
@@ -83,6 +97,18 @@ FROM
 WHERE distance != 'null'
 GROUP BY runner_id
 ORDER BY runner_id
+```
+
+```sql
+SELECT
+	runner_id,
+	COUNT(*) AS successful_orders
+FROM
+	runner_orders_temp
+WHERE
+	distance > 0
+GROUP BY
+	runner_id
 ```
 
 4. How many of each type of pizza was delivered?
@@ -97,6 +123,20 @@ FROM
     INNER JOIN pizza_runner.pizza_names pn ON co.pizza_id = pn.pizza_id
 WHERE distance != 'null'
 GROUP BY pn.pizza_name, co.pizza_id
+```
+
+```sql
+SELECT
+	pn.pizza_name,
+	COUNT(*) AS pizza_delivered
+FROM
+	customer_orders_temp cot
+	INNER JOIN runner_orders_temp rot ON cot.order_id = rot.order_id
+	INNER JOIN pizza_runner.pizza_names pn ON cot.pizza_id = pn.pizza_id
+WHERE
+	rot.distance > 0
+GROUP BY
+	pizza_name
 ```
 
 5. How many Vegetarian and Meatlovers were ordered by each customer?\*\*
@@ -115,6 +155,17 @@ ORDER BY
 	co.customer_id
 ```
 
+```sql
+SELECT
+	customer_id,
+	SUM(CASE WHEN pizza_id = 1 THEN 1 ELSE 0 END) AS meatlovers_orders,
+	SUM(CASE WHEN pizza_id = 2 THEN 1 ELSE 0 END) AS vegetarian_orders
+FROM
+	customer_orders_temp
+GROUP BY
+	customer_id
+```
+
 6. What was the maximum number of pizzas delivered in a single order?
 
 ```sql
@@ -125,6 +176,21 @@ FROM
 GROUP BY
 	co.order_id
 ORDER BY maximum_order DESC
+LIMIT 1
+```
+
+```sql
+SELECT
+	COUNT(*) AS pizza_count
+FROM
+	customer_orders_temp cot
+	INNER JOIN runner_orders_temp rot ON cot.order_id = rot.order_id
+WHERE
+	rot.distance > 0
+GROUP BY
+	rot.order_id
+ORDER BY
+	pizza_count DESC
 LIMIT 1
 ```
 
@@ -148,6 +214,20 @@ GROUP BY
 	co.customer_id
 ORDER BY
 	co.customer_id
+```
+
+```sql
+SELECT
+	cot.customer_id,
+	SUM(CASE WHEN cot.exclusions != ' ' AND cot.extras != ' ' THEN 1 ELSE 0 END) AS no_change,
+	COUNT(*) - SUM(CASE WHEN cot.exclusions != ' ' AND cot.extras != ' ' THEN 1 ELSE 0 END) AS at_least_1_change
+FROM
+	customer_orders_temp cot
+	INNER JOIN runner_orders_temp rot ON cot.order_id = rot.order_id
+WHERE
+	rot.distance > 0
+GROUP BY
+	cot.customer_id
 ```
 
 8. How many pizzas were delivered that had both exclusions and extras?
@@ -185,7 +265,7 @@ GROUP BY
 	TO_CHAR(order_time, 'Day')
 ```
 
-B. Runner and Customer Experience
+## B. Runner and Customer Experience
 
 1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
 
@@ -296,9 +376,27 @@ ORDER BY
 	runner_id
 ```
 
-C. Ingredient Optimisation
+## C. Ingredient Optimisation
 
 1. What are the standard ingredients for each pizza?
+
+```sql
+WITH pizza_toppings_cte AS
+	(SELECT
+		pizza_id,
+		REGEXP_SPLIT_TO_TABLE(toppings, '[,\s]+')::INTEGER AS topping_id
+	FROM
+		pizza_runner.pizza_recipes)
+
+SELECT
+	ptc.pizza_id,
+	pt.topping_name
+FROM
+	pizza_toppings_cte ptc
+	INNER JOIN pizza_runner.pizza_toppings pt ON ptc.topping_id = pt.topping_id
+ORDER BY
+	ptc.pizza_id
+```
 
 2. What was the most commonly added extra?
 
@@ -316,104 +414,112 @@ ORDER BY
 
 3. What was the most common exclusion?
 
-D. Do with cleansing data
-
-1. How many pizzas were ordered?
-
 ```sql
+WITH exclusions_cte AS
+	(SELECT
+		REGEXP_SPLIT_TO_TABLE(exclusions, '[,\s]+') exclusions
+	FROM
+		customer_orders_temp)
+
 SELECT
-	*
+	exclusions,
+	COUNT(*) exclusions_count
 FROM
-	customer_orders_temp
-```
-
-2. How many unique customer orders were made?
-
-```sql
-SELECT
-	COUNT(DISTINCT customer_id) AS customer_count
-FROM
-	customer_orders_temp
-```
-
-3. How many successful orders were delivered by each runner?
-
-```sql
-SELECT
-	runner_id,
-	COUNT(*) AS successful_orders
-FROM
-	runner_orders_temp
+	exclusions_cte
 WHERE
-	distance > 0
+	exclusions <> ''
 GROUP BY
-	runner_id
-```
-
-4. How many of each type of pizza was delivered?
-
-```sql
-SELECT
-	pn.pizza_name,
-	COUNT(*) AS pizza_delivered
-FROM
-	customer_orders_temp cot
-	INNER JOIN runner_orders_temp rot ON cot.order_id = rot.order_id
-	INNER JOIN pizza_runner.pizza_names pn ON cot.pizza_id = pn.pizza_id
-WHERE
-	rot.distance > 0
-GROUP BY
-	pizza_name
-```
-
-5. How many Vegetarian and Meatlovers were ordered by each customer?\*\*
-
-```sql
-SELECT
-	customer_id,
-	SUM(CASE WHEN pizza_id = 1 THEN 1 ELSE 0 END) AS meatlovers_orders,
-	SUM(CASE WHEN pizza_id = 2 THEN 1 ELSE 0 END) AS vegetarian_orders
-FROM
-	customer_orders_temp
-GROUP BY
-	customer_id
-```
-
-6. What was the maximum number of pizzas delivered in a single order?
-
-```sql
-SELECT
-	COUNT(*) AS pizza_count
-FROM
-	customer_orders_temp cot
-	INNER JOIN runner_orders_temp rot ON cot.order_id = rot.order_id
-WHERE
-	rot.distance > 0
-GROUP BY
-	rot.order_id
+	exclusions
 ORDER BY
-	pizza_count DESC
+	exclusions_count DESC
 LIMIT 1
 ```
 
-7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+4. Generate an order item for each record in the customers_orders table in the format of one of the following:
+   Meat Lovers
+   Meat Lovers - Exclude Beef
+   Meat Lovers - Extra Bacon
+   Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
 
 ```sql
+WITH exclusions_cte AS
+	(SELECT
+	 	order_id,
+	 	pizza_id,
+	 	exclusions,
+		REGEXP_SPLIT_TO_TABLE(exclusions, '[,\s]+')::INTEGER AS split_exclusion
+	FROM
+		customer_orders_temp
+	WHERE exclusions != ''
+	GROUP BY
+		order_id, pizza_id, exclusions),
+exclusion_name_cte AS
+	(SELECT order_id, pizza_id, exclusions, STRING_AGG(pt.topping_name, ', ') AS exclusions_names
+	FROM
+	 	exclusions_cte ec
+	 	INNER JOIN pizza_runner.pizza_toppings pt ON ec.split_exclusion = pt.topping_id
+		GROUP BY order_id, pizza_id, exclusions),
+extras_cte AS
+	(SELECT
+	 	order_id,
+	 	pizza_id,
+	 	extras,
+		REGEXP_SPLIT_TO_TABLE(extras, '[,\s]+')::INTEGER AS split_extras
+	FROM
+		customer_orders_temp
+	WHERE extras != ''
+	GROUP BY
+		order_id, pizza_id, extras),
+extras_name_cte AS
+	(SELECT order_id, pizza_id, extras, STRING_AGG(pt.topping_name, ', ') AS extras_names
+	FROM
+	 	extras_cte ec
+	 	INNER JOIN pizza_runner.pizza_toppings pt ON ec.split_extras = pt.topping_id
+		GROUP BY order_id, pizza_id, extras)
+
 SELECT
-	cot.customer_id,
-	SUM(CASE WHEN cot.exclusions != ' ' AND cot.extras != ' ' THEN 1 ELSE 0 END) AS no_change,
-	COUNT(*) - SUM(CASE WHEN cot.exclusions != ' ' AND cot.extras != ' ' THEN 1 ELSE 0 END) AS at_least_1_change
+	cot.order_id, cot.customer_id, cot.pizza_id,
+	CASE
+		WHEN enc.exclusions_names <> '' AND etnc.extras_names <> '' THEN pn.pizza_name || ' - Exclude ' || enc.exclusions_names || ' - Extra ' || etnc.extras_names
+		WHEN enc.exclusions_names <> '' THEN pn.pizza_name || ' - Exclude ' || enc.exclusions_names
+		WHEN etnc.extras_names <> '' THEN pn.pizza_name || ' - Extra ' || etnc.extras_names
+		ELSE pn.pizza_name END AS pizza_full_names
 FROM
 	customer_orders_temp cot
-	INNER JOIN runner_orders_temp rot ON cot.order_id = rot.order_id
+	INNER JOIN pizza_runner.pizza_names pn ON pn.pizza_id = cot.pizza_id
+	LEFT JOIN exclusion_name_cte enc ON cot.order_id = enc.order_id AND cot.pizza_id = enc.pizza_id AND cot.exclusions = enc.exclusions
+	LEFT JOIN extras_name_cte etnc ON cot.order_id = etnc.order_id AND cot.pizza_id = etnc.pizza_id AND cot.extras = etnc.extras
+ORDER BY
+	cot.order_id
+
+-- UPDATE customer_orders_temp
+-- SET extras = CASE WHEN extras = ' ' AND extras = '' THEN NULL ELSE extras END
+```
+
+5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients
+6. For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
+7. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
+
+```sql
+WITH topping_cte AS
+	(SELECT
+		pizza_id,
+		REGEXP_SPLIT_TO_TABLE(toppings, '[,\s]+')::INTEGER AS topping_id
+	FROM
+		pizza_runner.pizza_recipes)
+
+
+SELECT
+	topping_id,
+	COUNT(*) topping_count
+FROM
+	customer_orders_temp cot
+	INNER JOIN topping_cte tc ON cot.pizza_id = tc.pizza_id
+	INNER JOIN runner_orders_temp rot ON rot.order_id = cot.order_id
 WHERE
 	rot.distance > 0
 GROUP BY
-	cot.customer_id
+	topping_id
+ORDER BY
+	topping_count DESC
 ```
-
-8. How many pizzas were delivered that had both exclusions and extras?
-
-9. What was the total volume of pizzas ordered for each hour of the day?
-
-10. What was the volume of orders for each day of the week?

@@ -1,4 +1,4 @@
-A. Customer Nodes Exploration
+## A. Customer Nodes Exploration
 
 1. How many unique nodes are there on the Data Bank system?
 
@@ -47,7 +47,7 @@ FROM customer_date_node
 
 5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
 
-B. Customer Transactions
+## B. Customer Transactions
 
 1. What is the unique count and total amount for each transaction type?
 

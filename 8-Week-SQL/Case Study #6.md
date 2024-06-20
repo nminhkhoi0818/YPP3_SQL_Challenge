@@ -110,7 +110,7 @@ GROUP BY
 	product_category
 ```
 
-B. Product Funnel Analysis
+## B. Product Funnel Analysis
 
 ```sql
 WITH view_cart_cte AS
