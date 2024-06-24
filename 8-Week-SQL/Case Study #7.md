@@ -308,4 +308,44 @@ ORDER BY
 
 **9. What is the total transaction “penetration” for each product? (hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)**
 
+```sql
+WITH product_transactions AS (
+  SELECT
+    prod_id,
+    COUNT(DISTINCT txn_id) AS txn_count
+  FROM balanced_tree.sales
+  GROUP BY prod_id
+)
+SELECT
+  prod_id,
+  txn_count,
+  CAST(txn_count AS FLOAT) / (SELECT COUNT(DISTINCT txn_id) AS total_tnxs
+							 FROM balanced_tree.sales) AS penetration
+FROM
+  product_transactions
+```
+
 **10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?**
+
+```sql
+WITH txn_product_combinations AS (
+  SELECT
+    txn_id,
+    ARRAY_AGG(DISTINCT prod_id ORDER BY prod_id) AS product_combination
+  FROM
+    balanced_tree.sales
+  GROUP BY
+    txn_id
+  HAVING
+    COUNT(DISTINCT prod_id) = 3
+)
+SELECT
+  product_combination,
+  COUNT(*) AS combination_count
+FROM
+  txn_product_combinations
+GROUP BY
+  product_combination
+ORDER BY
+	combination_count DESC
+```
