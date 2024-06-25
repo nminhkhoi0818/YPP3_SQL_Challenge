@@ -182,3 +182,4 @@ const mouse = new ComputerMouse(
 // mouse.move(10, 5);
 // console.log(mouse.position);
 // mouse.scroll("up");
+export { ComputerMouse, Position, Button, Light, ScrollWheel, Shape };
