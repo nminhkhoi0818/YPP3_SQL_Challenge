@@ -15,19 +15,24 @@ describe("ComputerMouse", () => {
       [
         new Button(new Shape(5, 5, 5, "black"), "left"),
         new Button(new Shape(5, 5, 5, "black"), "right"),
+        new Button(new Shape(5, 5, 5, "black"), "side"),
         new Button(new Shape(5, 5, 5, "black"), "middle"),
       ],
       new ScrollWheel(new Shape(5, 5, 5, "black"), 10),
       new Shape(20, 10, 1, "black"),
       new Light("white", new Shape(5, 5, 5, "black"), 100, true),
-      new Position(0, 0)
+      new Position(0, 0), // cursor position
+      "ready"
     );
   });
 
-  test("should click button", () => {
-    expect(mouse.click("right")).toBe(
-      "right button clicked at position (0, 0)"
-    );
+  test("should ready", () => {
+    expect(mouse.status).toBe("ready");
+  });
+
+  test("should off", () => {
+    mouse.turnOff();
+    expect(mouse.status).toBe("off");
   });
 
   test("should move to new position", () => {
@@ -35,11 +40,19 @@ describe("ComputerMouse", () => {
     expect(mouse.position).toEqual(new Position(10, 5));
   });
 
+  test("should click button", () => {
+    mouse.click("right");
+    expect(mouse.status).toBe("button right clicked");
+  });
+
   test("should press button", () => {
-    mouse.move(-5, 10);
-    expect(mouse.press("left")).toBe(
-      "left button pressed at position (-5, 10)"
-    );
+    mouse.press("left");
+    expect(mouse.status).toBe("button left pressed");
+  });
+
+  test("should scroll", () => {
+    mouse.scroll("up", 10);
+    expect(mouse.status).toBe("scroll up 10px");
   });
 
   test("should turn light on and off", () => {

@@ -21,7 +21,7 @@ CREATE TABLE Challenge (
     Description VARCHAR,
     Location VARCHAR,
     Phase VARCHAR,
-    SubmissionFiles INT
+    StartDate TIMESTAMP
 );
 
 CREATE TABLE ChallengeUser (
@@ -53,18 +53,18 @@ INSERT INTO Category (ID, Name) VALUES
 (5, 'Photography'),
 (6, 'Video');
 
-INSERT INTO Challenge (ID, CategoryID, ChallengeName, Description, Location, Phase, SubmissionFiles) VALUES
-(1, 1, 'Image Classification', 'The challenge is to develop a deep learning model', 'Remote', 'Starting Phase', 2),
-(2, 2, 'Fraud Detection Kaggle', 'Participate in a Kaggle competition', 'HCM', 'Starting Phase', 1),
-(3, 3, 'Short Story Writing', 'Writing a compelling short story', 'Remote', 'Starting Phase', 1),
-(4, 4, 'Data Prediction', 'Predicting data trends using ML', 'Remote', 'Ending Phase', 2),
-(5, 5, 'Recipe Development', 'Creating new and innovative recipes', 'Remote', 'Ending Phase', 5);
+INSERT INTO Challenge (ID, CategoryID, ChallengeName, Description, Location, Phase, StartDate) VALUES
+(1, 1, 'Image Classification', 'The challenge is to develop a deep learning model', 'Remote', 'Starting Phase', '2024-06-26'),
+(2, 1, 'Fraud Detection Kaggle', 'Participate in a Kaggle competition', 'HCM', 'Starting Phase', '2024-06-27'),
+(3, 5, 'Short Story Writing', 'Writing a compelling short story', 'Remote', 'Starting Phase', '2024-06-23'),
+(4, 1, 'Data Prediction', 'Predicting data trends using ML', 'Remote', 'Ending Phase', '2024-06-27'),
+(5, 5, 'Recipe Development', 'Creating new and innovative recipes', 'Remote', 'Ending Phase', '2024-06-23');
 
 INSERT INTO ChallengeUser (ChallengeID, UserID, Score, Status, DateSubmission) VALUES
-(1, 1, 8, 'Passed', '2023-06-23'),
-(2, 1, 6, 'Passed', '2024-06-23'),
-(3, 2, 7, 'Passed', '2025-06-23'),
-(4, 2, 3, 'Failed', '2026-06-23'),
-(5, 3, 5, 'Passed', '2027-06-23'),
-(3, 3, 4, 'Failed', '2027-06-23');
+(1, 1, 8, 'Passed', '2024-06-10'),
+(2, 1, 6, 'Passed', '2024-05-08'),
+(3, 2, 7, 'Passed', '2024-01-23'),
+(4, 2, 3, 'Failed', '2024-02-04'),
+(5, 3, 5, 'Passed', '2024-08-14'),
+(3, 3, 4, 'Failed', '2024-12-17');
 

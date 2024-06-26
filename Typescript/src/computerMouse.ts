@@ -4,19 +4,22 @@ class ComputerMouse {
   shape: Shape;
   light: Light;
   position: Position;
+  status: String; // ready, clicked, pressed, scrolling
 
   constructor(
     buttons: Button[],
     scrollWheel: ScrollWheel,
     shape: Shape,
     light: Light,
-    position: Position
+    position: Position,
+    status: String
   ) {
     this.buttons = buttons;
     this.scrollWheel = scrollWheel;
     this.shape = shape;
     this.light = light;
     this.position = position;
+    this.status = status;
   }
 
   move(xOffset: number, yOffset: number): Position {
@@ -26,30 +29,39 @@ class ComputerMouse {
   }
 
   click(type: String): String {
+    this.status = "button " + type + " clicked";
     this.buttons.forEach((button) => {
       if (button.type === type) {
         button.click();
       }
     });
-    return `${type} button clicked at position (${this.position.x}, ${this.position.y})`;
+    return this.status;
   }
 
   press(type: String): String {
+    this.status = "button " + type + " pressed";
     this.buttons.forEach((button) => {
       if (button.type === type) {
         button.press();
       }
     });
 
-    return `${type} button pressed at position (${this.position.x}, ${this.position.y})`;
+    return this.status;
   }
 
-  scroll(direction: String) {
+  scroll(direction: String, scrollHeight: number = 10): String {
+    this.status = "scroll " + direction + " " + scrollHeight + "px";
     if (direction === "up") {
       this.scrollWheel.scrollUp();
     } else {
       this.scrollWheel.scrollDown();
     }
+
+    return this.status;
+  }
+
+  turnOff() {
+    this.status = "off";
   }
 
   turnOffLight() {
@@ -177,7 +189,8 @@ const mouse = new ComputerMouse(
   new ScrollWheel(new Shape(5, 5, 5, "black"), 10),
   new Shape(20, 10, 1, "black"),
   new Light("white", new Shape(5, 5, 5, "black"), 100, true),
-  new Position(0, 0)
+  new Position(0, 0),
+  "ready"
 );
 
 console.log(mouse.position);
