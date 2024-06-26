@@ -25,20 +25,23 @@ class ComputerMouse {
     return this.position;
   }
 
-  click(type: String) {
+  click(type: String): String {
     this.buttons.forEach((button) => {
       if (button.type === type) {
         button.click();
       }
     });
+    return `${type} button clicked at position (${this.position.x}, ${this.position.y})`;
   }
 
-  press(type: String) {
+  press(type: String): String {
     this.buttons.forEach((button) => {
       if (button.type === type) {
         button.press();
       }
     });
+
+    return `${type} button pressed at position (${this.position.x}, ${this.position.y})`;
   }
 
   scroll(direction: String) {
@@ -177,9 +180,10 @@ const mouse = new ComputerMouse(
   new Position(0, 0)
 );
 
-// console.log(mouse.position);
-// mouse.click("right");
-// mouse.move(10, 5);
-// console.log(mouse.position);
-// mouse.scroll("up");
+console.log(mouse.position);
+mouse.click("right");
+mouse.move(10, 5);
+console.log(mouse.position);
+mouse.scroll("up");
+
 export { ComputerMouse, Position, Button, Light, ScrollWheel, Shape };

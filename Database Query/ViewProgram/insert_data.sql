@@ -79,11 +79,13 @@ CREATE TABLE AdsProgram (
     PRIMARY KEY (ProgramID, StartDate, EndDate)
 );
 
+-- Insert data into Role table
 INSERT INTO Role (ID, RoleName) VALUES
 (1, 'Admin'),
 (2, 'Mentor'),
 (3, 'Mentee');
 
+-- Insert data into Users table
 INSERT INTO "Users" (ID, Name, RoleID) VALUES
 (1, 'Alice', 3),
 (2, 'Bob', 3),
@@ -95,6 +97,7 @@ INSERT INTO "Users" (ID, Name, RoleID) VALUES
 (8, 'Heidi', 3),
 (9, 'Ivan', 3);
 
+-- Insert data into Category table
 INSERT INTO Category (ID, CategoryName) VALUES
 (1, 'Information Technology'),
 (2, 'UI/UX Design'),
@@ -103,18 +106,21 @@ INSERT INTO Category (ID, CategoryName) VALUES
 (5, 'Photography'),
 (6, 'Video');
 
+-- Insert data into Program table
 INSERT INTO Program (ID, MentorID, Name, Description, Price, CategoryID) VALUES
-(1, 5, 'Software Engineering Fundamentals', 'Essential software engineering concepts', 33.99, 6),
-(2, 6, 'Data Science', 'Data analysis and machine learning mastery', 12.99, 5),
-(3, 5, 'Web Development Mastery', 'Interactive e-learning platform', 17.77, 4),
+(1, 5, 'Software Engineering Fundamentals', 'Essential software engineering concepts', 33.99, 1),
+(2, 6, 'Data Science', 'Data analysis and machine learning mastery', 12.99, 1),
+(3, 5, 'Web Development Mastery', 'Interactive e-learning platform', 17.77, 1),
 (4, 6, 'Mentoring Hub', 'Personalized professional growth through mentorship', 19.99, 3),
 (5, 5, 'Digital Marketing Bootcamp', 'Comprehensive training in digital marketing strategies and tools', 99.99, 2);
 
+-- Insert data into SourceType table
 INSERT INTO SourceType (ID, SourceName) VALUES
 (1, 'Course'),
 (2, 'Challenge'),
 (3, 'Program');
 
+-- Insert data into Review table
 INSERT INTO Review (SourceID, MenteeID, SourceTypeID, RatingStar, Content) VALUES
 (2, 1, 3, 4.5, 'Excellent tool for tracking environmental impact.'),
 (2, 2, 3, 4, 'Very helpful for managing patient records.'),
@@ -132,6 +138,7 @@ INSERT INTO Review (SourceID, MenteeID, SourceTypeID, RatingStar, Content) VALUE
 (1, 4, 1, 4.2, 'Useful for improving data prediction skills.'),
 (1, 5, 1, 4.7, 'Inspired me to create new recipes.');
 
+-- Insert data into ProgramUser table
 INSERT INTO ProgramUser (ProgramID, UserID, ProgressPercent, Status) VALUES
 (1, 1, 50, 'In Progress'),
 (2, 2, 30, 'In Progress'),
@@ -143,6 +150,7 @@ INSERT INTO ProgramUser (ProgramID, UserID, ProgressPercent, Status) VALUES
 (5, 7, 72, 'In Progress'),
 (1, 9, 85, 'Completed');
 
+-- Insert data into EventType table
 INSERT INTO EventType (ID, TypeName) VALUES
 (1, 'Page View'),
 (2, 'Add to Cart'),
@@ -151,18 +159,21 @@ INSERT INTO EventType (ID, TypeName) VALUES
 (5, 'Ad Click'),
 (6, 'View Category');
 
+-- Insert data into EventLog table
 INSERT INTO EventLog (ID, UserID, SourceID, SourceTypeID, EventTypeID, EventTime) VALUES
 (1, 1, 1, 3, 1, '2024-03-02 00:00:00'),
-(2, 2, 1, 1, 2, '2024-03-03 00:00:00'),
+(2, 1, 1, 1, 2, '2024-03-03 00:00:00'),
 (3, 1, 2, 2, 3, '2024-03-04 00:00:00'),
-(4, 2, 2, 3, 4, '2024-03-05 00:00:00'),
-(5, 3, 2, 1, 5, '2024-03-06 00:00:00');
+(4, 1, 2, 3, 4, '2024-03-05 00:00:00'),
+(5, 1, 2, 1, 5, '2024-03-06 00:00:00');
 
+-- Insert data into AdsProgram table
 INSERT INTO AdsProgram (ProgramID, StartDate, EndDate) VALUES
 (1, '2024-06-01 00:00:00', '2024-06-30 00:00:00'),
 (3, '2024-07-01 00:00:00', '2024-07-15 00:00:00'),
 (5, '2024-06-15 00:00:00', '2024-07-15 00:00:00');
 
+-- Insert data into Tag table
 INSERT INTO Tag (ID, Name) VALUES
 (1, 'Beginner Level'),
 (2, 'Personal Growth'),
@@ -170,6 +181,7 @@ INSERT INTO Tag (ID, Name) VALUES
 (4, 'News'),
 (5, 'Coding');
 
+-- Insert data into SourceTag table
 INSERT INTO SourceTag (SourceID, TagID, SourceTypeID) VALUES
 (1, 4, 2),
 (1, 1, 1),

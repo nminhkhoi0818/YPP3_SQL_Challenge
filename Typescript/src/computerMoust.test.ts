@@ -24,8 +24,33 @@ describe("ComputerMouse", () => {
     );
   });
 
+  test("should click button", () => {
+    expect(mouse.click("right")).toBe(
+      "right button clicked at position (0, 0)"
+    );
+  });
+
   test("should move to new position", () => {
     mouse.move(10, 5);
     expect(mouse.position).toEqual(new Position(10, 5));
+  });
+
+  test("should press button", () => {
+    mouse.move(-5, 10);
+    expect(mouse.press("left")).toBe(
+      "left button pressed at position (-5, 10)"
+    );
+  });
+
+  test("should turn light on and off", () => {
+    mouse.turnOnLight();
+    expect(mouse.light.status).toBe(true);
+    mouse.turnOffLight();
+    expect(mouse.light.status).toBe(false);
+  });
+
+  test("should change light color", () => {
+    mouse.changeLightColor("red");
+    expect(mouse.light.color).toBe("red");
   });
 });
