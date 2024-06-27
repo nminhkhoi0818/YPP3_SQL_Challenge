@@ -51,8 +51,8 @@ describe("ComputerMouse", () => {
   });
 
   test("should scroll", () => {
-    mouse.scroll("up", 10);
-    expect(mouse.status).toBe("scroll up 10px");
+    mouse.scroll("up", 20);
+    expect(mouse.status).toBe("scroll up 20px");
   });
 
   test("should turn light on and off", () => {
