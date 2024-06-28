@@ -4,7 +4,9 @@ class ComputerMouse {
   shape: Shape;
   light: Light;
   position: Position;
-  status: String; // ready, clicked, pressed, scrolling
+  mouseSpeed: number;
+  connectionType: String; // wired, wireless
+  status: String; // off, ready, clicked, pressed, scrolling
 
   constructor(
     buttons: Button[],
@@ -12,6 +14,8 @@ class ComputerMouse {
     shape: Shape,
     light: Light,
     position: Position,
+    mouseSpeed: number,
+    connectionType: String,
     status: String
   ) {
     this.buttons = buttons;
@@ -19,6 +23,8 @@ class ComputerMouse {
     this.shape = shape;
     this.light = light;
     this.position = position;
+    this.mouseSpeed = mouseSpeed;
+    this.connectionType = connectionType;
     this.status = status;
   }
 
@@ -30,11 +36,38 @@ class ComputerMouse {
 
   click(type: String): String {
     this.status = "button " + type + " clicked";
+    switch (type) {
+      case "left":
+        this.openTargetObject();
+        break;
+      case "right":
+        this.openContextMenu();
+        break;
+      case "middle":
+        this.changeMouseSpeed(20);
+        break;
+      case "side-first":
+        this.goToNextPage();
+        break;
+      case "side-second":
+        this.goToPreviousPage();
+        break;
+      case "side-third":
+        this.changeConnectionType("wireless");
+        break;
+    }
+
+    return this.status;
+  }
+
+  doubleClick(type: String): String {
+    this.status = "button " + type + " double clicked";
     this.buttons.forEach((button) => {
       if (button.type === type) {
-        button.click();
+        button.doubleClick();
       }
     });
+
     return this.status;
   }
 
@@ -60,6 +93,14 @@ class ComputerMouse {
     return this.status;
   }
 
+  changeMouseSpeed(speed: number) {
+    this.mouseSpeed = speed;
+  }
+
+  changeConnectionType(type: String) {
+    this.connectionType = type;
+  }
+
   turnOff() {
     this.status = "off";
   }
@@ -74,6 +115,26 @@ class ComputerMouse {
 
   changeLightColor(color: String) {
     this.light.changeColor(color);
+  }
+
+  adjustLightBrightness(brightness: number) {
+    this.light.adjustBrightness(brightness);
+  }
+
+  openTargetObject() {
+    console.log("Open target object");
+  }
+
+  openContextMenu() {
+    console.log("Open context menu");
+  }
+
+  goToNextPage() {
+    console.log("Go to next page");
+  }
+
+  goToPreviousPage() {
+    console.log("Go to previous page");
   }
 }
 
@@ -179,24 +240,5 @@ class Shape {
     this.color = color;
   }
 }
-
-const mouse = new ComputerMouse(
-  [
-    new Button(new Shape(5, 5, 5, "black"), "left"),
-    new Button(new Shape(5, 5, 5, "black"), "right"),
-    new Button(new Shape(5, 5, 5, "black"), "middle"),
-  ],
-  new ScrollWheel(new Shape(5, 5, 5, "black"), 10),
-  new Shape(20, 10, 1, "black"),
-  new Light("white", new Shape(5, 5, 5, "black"), 100, true),
-  new Position(0, 0),
-  "ready"
-);
-
-console.log(mouse.position);
-mouse.click("right");
-mouse.move(10, 5);
-console.log(mouse.position);
-mouse.scroll("up");
 
 export { ComputerMouse, Position, Button, Light, ScrollWheel, Shape };

@@ -41,3 +41,22 @@ GROUP BY
 ORDER BY
 	program_member_count DESC
 LIMIT 4;
+
+-- Get trending program (program that having most user take part in this month)
+SELECT
+	p.Name AS program_name, 
+   	p.Price,
+    COUNT(r.SourceID) AS review_count,
+    AVG(r.RatingStar) AS rating_star,
+    COUNT(*) AS program_member_count
+FROM
+	ProgramUser pu
+    JOIN Program p ON pu.ProgramID = p.ID
+    LEFT JOIN Review r ON r.SourceID = p.ID AND r.SourceTypeID = 3
+WHERE
+    pu.StartDate >= CURRENT_DATE - INTERVAL '1 month'
+GROUP BY
+	p.Name, p.Price, r.SourceID, r.SourceTypeID
+ORDER BY
+	program_member_count DESC
+LIMIT 4;
