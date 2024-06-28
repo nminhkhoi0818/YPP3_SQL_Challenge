@@ -18,19 +18,19 @@ SELECT
 	cl.ChallengeName AS challenge_name,
     cl.Location AS challenge_position,
     cl.StartDate AS challenge_date,
-	c.Name AS challenge_category
+	c.CategoryName AS challenge_category
 FROM
 	Challenge cl
     JOIN Category c ON cl.CategoryID = c.ID
 WHERE 
-	c.Name = 'Information Technology';
+	c.CategoryName = 'Information Technology';
     
 -- Upcoming in 24h
 SELECT
 	cl.ChallengeName AS challenge_name,
     cl.Location AS challenge_position,
     cl.StartDate AS challenge_date,
-	c.Name AS challenge_category
+	c.CategoryName AS challenge_category
 FROM
 	Challenge cl
     JOIN Category c ON cl.CategoryID = c.ID

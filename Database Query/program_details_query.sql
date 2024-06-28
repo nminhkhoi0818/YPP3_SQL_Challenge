@@ -1,23 +1,19 @@
 -- Get information of program 2
 SELECT 
-	p.ProgramName AS program_name,
+	p.Name AS program_name,
     p.Description AS program_description,
     p.Price,
-    u.Name AS mentor_name
+    u.Name AS mentor_name,
+    COUNT(SourceID) AS review_count,
+    AVG(RatingStar) AS rating_star
 FROM 
 	Program p
     JOIN "User" u ON p.MentorID = u.ID
+    LEFT JOIN Review r ON r.SourceID = p.ID AND r.SourceTypeID = 3
 WHERE 
-	p.ID = 2;
-
--- Get reviews of program 2
-SELECT 
-	SourceID AS program_id, 
-    COUNT(SourceID) AS review_count,
-    AVG(RatingStar) AS rating_star
-FROM Review
-WHERE SourceID = 2 AND SourceTypeID = 3
-GROUP BY SourceID, SourceTypeID;
+	p.ID = 2
+GROUP BY
+	p.Name, p.Description, p.Price, u.Name, r.SourceID, r.SourceTypeID;
 
 -- Get challenges of program 2
 SELECT

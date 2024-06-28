@@ -12,7 +12,7 @@ WHERE
 
 -- Get order details of order 1
 SELECT
-	p.ProgramName AS program_name,
+	p.Name AS program_name,
     p.Price AS program_price,
     u.Name AS mentor_name
 FROM 
@@ -25,7 +25,6 @@ WHERE
     
 SELECT
 	c.CourseName course_name,
-    c.Price AS course_price,
     u.Name AS mentor_name
 FROM 
 	"Order" o
