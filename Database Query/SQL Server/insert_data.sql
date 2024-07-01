@@ -174,6 +174,16 @@ INSERT INTO program (id, user_id, program_name, description, price, category_id)
 (3, 5, 'Web Development Mastery', 'Interactive e-learning platform', 17.77, 1),
 (4, 6, 'Mentoring Hub', 'Personalized professional growth through mentorship', 19.99, 3),
 (5, 5, 'Digital Marketing Bootcamp', 'Comprehensive training in digital marketing strategies and tools', 99.99, 2);
+(6, 1, 'Machine Learning A-Z', 'Complete machine learning guide', 45.99, 1),
+(7, 2, 'Cloud Computing Basics', 'Introduction to cloud services and architecture', 29.99, 4),
+(8, 2, 'Cybersecurity Essentials', 'Fundamentals of cybersecurity practices', 39.99, 3),
+(9, 3, 'Advanced Java Programming', 'Deep dive into Java programming language', 55.00, 1),
+(10, 4, 'Blockchain and Cryptocurrency', 'Understanding blockchain technology and cryptocurrencies', 60.00, 4),
+(11, 5, 'Artificial Intelligence for Beginners', 'Basics of AI and its applications', 70.00, 1),
+(12, 3, 'Project Management Professional (PMP)', 'Comprehensive PMP certification prep', 80.00, 5),
+(13, 4, 'User Experience (UX) Design', 'Designing user-friendly interfaces', 50.00, 2),
+(14, 5, 'Mobile App Development with Flutter', 'Building mobile apps using Flutter', 65.00, 4),
+(15, 1, 'DevOps and Continuous Integration', 'Introduction to DevOps practices and tools', 75.00, 1);
 
 INSERT INTO course (id, course_name, description, price, user_id) VALUES
 (1, 'Grow Your Video Editing Skills from Experts', 'Essential software engineering concepts', 7.99, 1),
@@ -261,9 +271,12 @@ INSERT INTO event_type (id, event_type_name) VALUES
 INSERT INTO event_log (id, user_id, source_id, source_type_id, event_type_id, event_time, duration) VALUES
 (1, 1, 1, 3, 1, '2024-03-02 00:00:00', 20),
 (2, 2, 1, 1, 2, '2024-03-03 00:00:00', 15),
-(3, 1, 2, 2, 3, '2024-04-04 00:00:00', 18),
+(3, 1, 3, 2, 3, '2024-04-04 00:00:00', 18),
 (4, 2, 2, 3, 4, '2024-05-05 00:00:00', 3),
 (5, 3, 2, 1, 5, '2024-06-06 00:00:00', 7);
+(6, 1, 4, 3, 1, '2024-07-07 00:00:00', 12),
+(7, 1, 5, 3, 1, '2024-08-08 00:00:00', 25),
+(8, 1, 3, 3, 1, '2024-09-09 00:00:00', 30);
 
 INSERT INTO ads_program (program_id, start_date, end_date) VALUES
 (1, '2024-06-01 00:00:00', '2024-06-30 00:00:00'),
@@ -305,3 +318,63 @@ INSERT INTO setting (id, setting_type, setting_name, setting_value) VALUES
 (4, 'Role', 'Mentee', 1),
 (5, 'Role', 'Mentor', 2),
 (6, 'Role', 'Admin', 3);
+
+CREATE TABLE tag (
+    id INT PRIMARY KEY,
+    tag_name VARCHAR(255)
+);
+
+INSERT INTO tag(id, tag_name) VALUES
+(1, 'Python'),
+(2, 'Data Science'),
+(3, 'Selenium'),
+(4, 'Web Development'),
+(5, 'React'),
+(6, 'React Router'),
+(7, 'Redux'),
+(8, 'NextJS'),
+(9, 'React Native'),
+(10, 'Jupyter Notebook'),
+(11, 'Machine Learning'),
+(12, 'Cloud Computing'),
+(13, 'Cybersecurity'),
+(14, 'Java'),
+(15, 'Blockchain'),
+(16, 'Cryptocurrency'),
+(17, 'Artificial Intelligence'),
+(18, 'Project Management'),
+(19, 'UX Design'),
+(20, 'Flutter'),
+(21, 'DevOps');
+
+CREATE TABLE source_tag (
+    source_id INT,
+    source_type_id INT,
+    tag_id INT,
+    PRIMARY KEY (source_id, source_type_id, tag_id)
+);
+
+INSERT INTO source_tag (source_id, source_type_id, tag_id) VALUES
+(1, 1, 4),
+(2, 1, 2),
+(2, 1, 11),
+(3, 1, 4),
+(3, 1, 5),
+(3, 1, 6),
+(3, 1, 7),
+(3, 1, 8),
+(3, 1, 9),
+(4, 1, 18),
+(5, 1, 4),
+(6, 1, 2),
+(6, 1, 11),
+(7, 1, 12),
+(8, 1, 13),
+(9, 1, 14),
+(10, 1, 15),
+(10, 1, 16),
+(11, 1, 17),
+(12, 1, 18),
+(13, 1, 19),
+(14, 1, 20),
+(15, 1, 21);

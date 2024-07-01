@@ -1,54 +1,41 @@
-CREATE FUNCTION dbo.GetRecommendPrograms (@user_id INT)
-RETURNS TABLE
-AS
-RETURN
-(
-    WITH latest_category AS (
-        SELECT TOP 1 
-            p.category_id
-        FROM
-            event_log el
-            JOIN [user] u ON el.user_id = u.id
-            JOIN program p ON el.source_id = p.id
-        WHERE 
-            el.user_id = @user_id AND el.source_type_id = (
-				SELECT setting_value
-				FROM setting
-				WHERE setting_type = 'SourceType' AND setting_name = 'program'
-			)
-        ORDER BY
-            el.event_time DESC
-    )
-    SELECT
-        p.program_name AS recommend_program,
-        p.price,
-        ISNULL(COUNT(r.source_id), 0) AS review_count,
-        ISNULL(AVG(r.rating_star), 0) AS rating_star
-    FROM 
-        latest_category lc
-        JOIN program p ON lc.category_id = p.category_id
-        LEFT JOIN review r ON r.source_id = p.id AND r.source_type_id = (
-			SELECT setting_value
-			FROM setting
-			WHERE setting_type = 'SourceType' AND setting_name = 'program'
-		)
-    GROUP BY p.program_name, p.price
-);
+-- Get recommend program
+WITH latest_program_view AS (
+    SELECT TOP 1 p.id
+    FROM event_log el 
+    JOIN program p ON el.source_id = p.id
+    WHERE el.user_id = 1
+    ORDER BY el.event_time DESC
+),
+latest_tags AS (
+    SELECT st.tag_id
+    FROM source_tag st 
+    JOIN latest_program_view lpv ON st.source_id = lpv.id
+)
+SELECT
+    p.id, p.program_name, p.price, p.description, COUNT(st.tag_id) AS tag_simlar_count
+FROM latest_tags lt
+JOIN source_tag st ON lt.tag_id = st.tag_id 
+JOIN program p ON st.source_id = p.id
+GROUP BY p.id, p.program_name, p.price, p.description
+ORDER BY tag_simlar_count DESC
 
-SELECT * FROM dbo.GetRecommendPrograms(1);
+-- Get popular program
+SELECT p.id, p.program_name, p.price, COUNT(el.user_id) view_count
+FROM event_log el
+	JOIN program p ON el.source_id = p.id
+WHERE el.source_type_id = 3
+GROUP BY p.id, p.program_name, p.price
+ORDER BY view_count DESC
 
--- Get popular program (program that has most users participating)
-SELECT TOP 4
-	p.program_name AS program_name, 
-   	p.price,
-    COUNT(r.source_id) AS review_count,
-    AVG(r.rating_star) AS rating_star,
-    COUNT(*) AS program_member_count
+-- Get best-seller program
+SELECT
+	TOP 10 
+	p.id, p.program_name, p.price, COUNT(order_id) AS program_purchase_count 
 FROM
-	program_user pu
-    JOIN program p ON pu.program_id = p.id
-    LEFT JOIN review r ON r.source_id = p.id AND r.source_type_id = 3
+	[order] o
+	JOIN order_details od ON o.id = od.order_id
+	JOIN program p ON p.id = od.source_id
 GROUP BY
-	p.program_name, p.price, r.source_id, r.source_type_id
+	p.id, p.program_name, p.price
 ORDER BY
-	program_member_count DESC;
+	program_purchase_count DESC

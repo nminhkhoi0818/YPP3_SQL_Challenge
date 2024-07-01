@@ -1,10 +1,10 @@
 enum Status {
-  off = "off",
-  ready = "ready",
-  clicked = "clicked",
-  doubleClicked = "doubleClicked",
-  pressed = "pressed",
-  scrolling = "scrolling",
+  off,
+  ready,
+  clicked,
+  doubleClicked,
+  pressed,
+  scrolling,
 }
 
 class ComputerMouse {
@@ -22,20 +22,23 @@ class ComputerMouse {
     this.position.y = this.position.y + yOffset;
   }
 
-  click(button: Button) {
-    button.click();
+  click(type: string) {
+    let button = this.buttons.find((button) => button.type === type);
+    button?.click();
   }
 
-  doubleClick(button: Button) {
-    button.doubleClick();
+  doubleClick(type: string) {
+    let button = this.buttons.find((button) => button.type === type);
+    button?.doubleClick();
   }
 
-  press(button: Button) {
-    button.press();
+  press(type: string) {
+    let button = this.buttons.find((button) => button.type === type);
+    button?.press();
   }
 
-  scroll(direction: string, scrollHeight: number = 10) {
-    this.scrollWheel.scroll(direction, scrollHeight);
+  scroll(direction: string, scrollSpeed: number, scrollTime: number) {
+    this.scrollWheel.scroll(direction, scrollSpeed, scrollTime);
   }
 
   changeMouseSpeed(speed: number) {
@@ -79,25 +82,25 @@ class Position {
 
 class Button {
   shape: Shape;
-  type: string; // left, right, middle, side-first, side-second, side-third
-  state: string;
+  type: string;
+  state: number;
 
-  constructor(shape: Shape, type: string, state: string) {
+  constructor(shape: Shape, type: string, state: number) {
     this.shape = shape;
     this.type = type;
     this.state = state;
   }
 
   click() {
-    this.state = "clicked";
+    this.state = Status.clicked;
   }
 
   doubleClick() {
-    this.state = "doubleClicked";
+    this.state = Status.doubleClicked;
   }
 
   press() {
-    this.state = "pressed";
+    this.state = Status.pressed;
   }
 }
 
@@ -139,17 +142,20 @@ class Light {
 class ScrollWheel {
   shape: Shape;
   direction: string;
-  scrollHeight: number;
+  scrollSpeed: number;
+  scrollTime: number;
 
-  constructor(shape: Shape, scrollHeight: number) {
+  constructor(shape: Shape, scrollSpeed: number) {
     this.shape = shape;
     this.direction = "";
-    this.scrollHeight = scrollHeight;
+    this.scrollSpeed = 0;
+    this.scrollTime = 0;
   }
 
-  scroll(direction: string, scrollHeight: number) {
+  scroll(direction: string, scrollSpeed: number, scrollTime: number) {
     this.direction = direction;
-    this.scrollHeight = scrollHeight;
+    this.scrollSpeed = scrollSpeed;
+    this.scrollTime = scrollTime;
   }
 
   press() {

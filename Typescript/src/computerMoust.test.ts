@@ -11,20 +11,20 @@ describe("ComputerMouse", () => {
   let mouse: ComputerMouse;
 
   enum Status {
-    off = "off",
-    ready = "ready",
-    clicked = "clicked",
-    doubleClicked = "doubleClicked",
-    pressed = "pressed",
-    scrolling = "scrolling",
+    off,
+    ready,
+    clicked,
+    doubleClicked,
+    pressed,
+    scrolling,
   }
 
   beforeEach(() => {
     mouse = new ComputerMouse();
     mouse.buttons = [
-      new Button(new Shape(20, 5, 5, "black"), "left", ""),
-      new Button(new Shape(20, 5, 5, "black"), "right", ""),
-      new Button(new Shape(20, 5, 5, "black"), "middle", ""),
+      new Button(new Shape(20, 5, 5, "black"), "left", Status.ready),
+      new Button(new Shape(20, 5, 5, "black"), "right", Status.ready),
+      new Button(new Shape(20, 5, 5, "black"), "middle", Status.ready),
     ];
     mouse.scrollWheel = new ScrollWheel(new Shape(20, 5, 5, "black"), 10);
     mouse.shape = new Shape(20, 5, 5, "black");
@@ -50,39 +50,45 @@ describe("ComputerMouse", () => {
   });
 
   test("should click right button", () => {
+    mouse.click("right");
+
     let rightButton = mouse.buttons.find((button) => button.type === "right");
-    mouse.click(rightButton!);
     expect(rightButton?.state).toBe(Status.clicked);
   });
 
   test("should click left button", () => {
+    mouse.click("left");
+
     let leftButton = mouse.buttons.find((button) => button.type === "left");
-    mouse.click(leftButton!);
     expect(leftButton?.state).toBe(Status.clicked);
   });
 
   test("should click middle button", () => {
+    mouse.click("middle");
+
     let middleButton = mouse.buttons.find((button) => button.type === "middle");
-    mouse.click(middleButton!);
     expect(middleButton?.state).toBe(Status.clicked);
   });
 
   test("should double click button", () => {
+    mouse.doubleClick("right");
+
     let rightButton = mouse.buttons.find((button) => button.type === "right");
-    mouse.doubleClick(rightButton!);
     expect(rightButton?.state).toBe(Status.doubleClicked);
   });
 
   test("should press button", () => {
+    mouse.press("right");
+
     let rightButton = mouse.buttons.find((button) => button.type === "right");
-    mouse.press(rightButton!);
     expect(rightButton?.state).toBe(Status.pressed);
   });
 
   test("should scroll", () => {
-    mouse.scroll("up", 20);
+    mouse.scroll("up", 20, 10);
     expect(mouse.scrollWheel.direction).toBe("up");
-    expect(mouse.scrollWheel.scrollHeight).toBe(20);
+    expect(mouse.scrollWheel.scrollSpeed).toBe(20);
+    expect(mouse.scrollWheel.scrollTime).toBe(10);
   });
 
   test("should change mouse speed", () => {
