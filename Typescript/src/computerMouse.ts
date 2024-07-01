@@ -1,32 +1,21 @@
-class ComputerMouse {
-  buttons: Button[];
-  scrollWheel: ScrollWheel;
-  shape: Shape;
-  light: Light;
-  position: Position;
-  mouseSpeed: number;
-  connectionType: String; // wired, wireless
-  status: String; // off, ready, clicked, pressed, scrolling
+enum Status {
+  off = "off",
+  ready = "ready",
+  clicked = "clicked",
+  doubleClicked = "doubleClicked",
+  pressed = "pressed",
+  scrolling = "scrolling",
+}
 
-  constructor(
-    buttons: Button[],
-    scrollWheel: ScrollWheel,
-    shape: Shape,
-    light: Light,
-    position: Position,
-    mouseSpeed: number,
-    connectionType: String,
-    status: String
-  ) {
-    this.buttons = buttons;
-    this.scrollWheel = scrollWheel;
-    this.shape = shape;
-    this.light = light;
-    this.position = position;
-    this.mouseSpeed = mouseSpeed;
-    this.connectionType = connectionType;
-    this.status = status;
-  }
+class ComputerMouse {
+  buttons!: Button[];
+  scrollWheel!: ScrollWheel;
+  shape!: Shape;
+  light!: Light;
+  position!: Position;
+  mouseSpeed!: number;
+  connectionType!: string; // wired, wireless
+  status!: Status;
 
   move(xOffset: number, yOffset: number): Position {
     this.position.x = this.position.x + xOffset;
@@ -34,62 +23,27 @@ class ComputerMouse {
     return this.position;
   }
 
-  click(type: String): String {
-    this.status = "button " + type + " clicked";
-    switch (type) {
-      case "left":
-        this.openTargetObject();
-        break;
-      case "right":
-        this.openContextMenu();
-        break;
-      case "middle":
-        this.changeMouseSpeed(20);
-        break;
-      case "side-first":
-        this.goToNextPage();
-        break;
-      case "side-second":
-        this.goToPreviousPage();
-        break;
-      case "side-third":
-        this.changeConnectionType("wireless");
-        break;
-    }
-
+  click(button: Button): string {
+    button.click();
+    this.status = Status.clicked;
     return this.status;
   }
 
-  doubleClick(type: String): String {
-    this.status = "button " + type + " double clicked";
-    this.buttons.forEach((button) => {
-      if (button.type === type) {
-        button.doubleClick();
-      }
-    });
-
+  doubleClick(button: Button): string {
+    button.doubleClick();
+    this.status = Status.doubleClicked;
     return this.status;
   }
 
-  press(type: String): String {
-    this.status = "button " + type + " pressed";
-    this.buttons.forEach((button) => {
-      if (button.type === type) {
-        button.press();
-      }
-    });
-
+  press(button: Button): string {
+    button.press();
+    this.status = Status.pressed;
     return this.status;
   }
 
-  scroll(direction: String, scrollHeight: number = 10): String {
-    this.status = "scroll " + direction + " " + scrollHeight + "px";
-    if (direction === "up") {
-      this.scrollWheel.scrollUp();
-    } else {
-      this.scrollWheel.scrollDown();
-    }
-
+  scroll(direction: string, scrollHeight: number = 10): string {
+    this.scrollWheel.scroll(direction, scrollHeight);
+    this.status = Status.scrolling;
     return this.status;
   }
 
@@ -97,12 +51,12 @@ class ComputerMouse {
     this.mouseSpeed = speed;
   }
 
-  changeConnectionType(type: String) {
+  changeConnectionType(type: string) {
     this.connectionType = type;
   }
 
   turnOff() {
-    this.status = "off";
+    this.status = Status.off;
   }
 
   turnOffLight() {
@@ -113,7 +67,7 @@ class ComputerMouse {
     this.light.turnOn();
   }
 
-  changeLightColor(color: String) {
+  changeLightColor(color: string) {
     this.light.changeColor(color);
   }
 
@@ -150,34 +104,36 @@ class Position {
 
 class Button {
   shape: Shape;
-  type: String;
+  type: string; // left, right, middle, side-first, side-second, side-third
+  state: string;
 
-  constructor(shape: Shape, type: String) {
+  constructor(shape: Shape, type: string, state: string) {
     this.shape = shape;
     this.type = type;
+    this.state = state;
   }
 
   click() {
-    console.log(`Button ${this.type} clicked`);
+    this.state = "clicked";
   }
 
   doubleClick() {
-    console.log(`Button ${this.type} double clicked`);
+    this.state = "doubleClicked";
   }
 
   press() {
-    console.log(`Button ${this.type} pressed`);
+    this.state = "pressed";
   }
 }
 
 class Light {
-  color: String;
+  color: string;
   shape: Shape;
   brightness: number;
   status: Boolean;
 
   constructor(
-    color: String,
+    color: string,
     shape: Shape,
     brightness: number,
     status: Boolean
@@ -196,7 +152,7 @@ class Light {
     this.status = false;
   }
 
-  changeColor(color: String) {
+  changeColor(color: string) {
     this.color = color;
   }
 
@@ -207,19 +163,18 @@ class Light {
 
 class ScrollWheel {
   shape: Shape;
-  scrollSpeed: number;
+  direction: string;
+  scrollHeight: number;
 
-  constructor(shape: Shape, scrollSpeed: number) {
+  constructor(shape: Shape, scrollHeight: number) {
     this.shape = shape;
-    this.scrollSpeed = scrollSpeed;
+    this.direction = "";
+    this.scrollHeight = scrollHeight;
   }
 
-  scrollDown() {
-    console.log("Scrolling down");
-  }
-
-  scrollUp() {
-    console.log("Scrolling up");
+  scroll(direction: string, scrollHeight: number) {
+    this.direction = direction;
+    this.scrollHeight = scrollHeight;
   }
 
   press() {
@@ -231,9 +186,9 @@ class Shape {
   length: number;
   width: number;
   height: number;
-  color: String;
+  color: string;
 
-  constructor(length: number, width: number, height: number, color: String) {
+  constructor(length: number, width: number, height: number, color: string) {
     this.length = length;
     this.width = width;
     this.height = height;

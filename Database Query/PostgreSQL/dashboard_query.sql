@@ -3,24 +3,18 @@ SELECT
 	COUNT(ProgramID) AS total_program,
     SUM(CASE WHEN Status = 'Completed' THEN 1 ELSE 0 END) AS completed_program
 FROM
-	ProgramUser pu
-    JOIN Program p ON pu.ProgramID = p.ID
+	ProgramUser
 WHERE 
-	UserID = 2
-GROUP BY 
-	UserID;
-    
+	UserID = 2;
+
 -- Get all challenge and completed challenge of user 2
 SELECT
 	COUNT(ChallengeID) AS total_challenge,
-    SUM(CASE WHEN Status = 'Completed' THEN 1 ELSE 0 END) AS completed_challenge
+    SUM(CASE WHEN Status = 'Passed' THEN 1 ELSE 0 END) AS completed_challenge
 FROM
-	ChallengeUser cu
-    JOIN Challenge c ON cu.ChallengeID = c.ID
+	ChallengeUser
 WHERE 
-	UserID = 2
-GROUP BY 
-	UserID;
+	UserID = 2;
     
 -- Get program progress
 SELECT
@@ -48,10 +42,11 @@ WHERE
 ORDER BY
 	cu.DateSubmission;
     
--- Get hour activity of user 2
+-- Get sum hour activity of user 2
 SELECT 
 	TO_CHAR(EventTime, 'Month') AS month_name,
-    SUM(duration) AS monthly_duration
+    SUM(duration) AS monthly_duration,
+	AVG(duration) AS average_duration
 FROM 
 	EventLog
 WHERE 
