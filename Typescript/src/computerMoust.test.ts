@@ -14,6 +14,7 @@ describe("ComputerMouse", () => {
     off = "off",
     ready = "ready",
     clicked = "clicked",
+    doubleClicked = "doubleClicked",
     pressed = "pressed",
     scrolling = "scrolling",
   }
@@ -35,12 +36,12 @@ describe("ComputerMouse", () => {
   });
 
   test("should ready", () => {
-    expect(mouse.status).toBe("ready");
+    expect(mouse.status).toBe(Status.ready);
   });
 
   test("should off", () => {
     mouse.turnOff();
-    expect(mouse.status).toBe("off");
+    expect(mouse.status).toBe(Status.off);
   });
 
   test("should move to new position", () => {
@@ -51,47 +52,35 @@ describe("ComputerMouse", () => {
   test("should click right button", () => {
     let rightButton = mouse.buttons.find((button) => button.type === "right");
     mouse.click(rightButton!);
-
-    expect(mouse.status).toBe(Status.clicked);
-    expect(rightButton?.state).toBe("clicked");
+    expect(rightButton?.state).toBe(Status.clicked);
   });
 
   test("should click left button", () => {
     let leftButton = mouse.buttons.find((button) => button.type === "left");
     mouse.click(leftButton!);
-
-    expect(mouse.status).toBe(Status.clicked);
-    expect(leftButton?.state).toBe("clicked");
+    expect(leftButton?.state).toBe(Status.clicked);
   });
 
   test("should click middle button", () => {
     let middleButton = mouse.buttons.find((button) => button.type === "middle");
     mouse.click(middleButton!);
-
-    expect(mouse.status).toBe(Status.clicked);
-    expect(middleButton?.state).toBe("clicked");
+    expect(middleButton?.state).toBe(Status.clicked);
   });
 
   test("should double click button", () => {
     let rightButton = mouse.buttons.find((button) => button.type === "right");
     mouse.doubleClick(rightButton!);
-
-    expect(mouse.status).toBe("doubleClicked");
-    expect(rightButton?.state).toBe("doubleClicked");
+    expect(rightButton?.state).toBe(Status.doubleClicked);
   });
 
   test("should press button", () => {
     let rightButton = mouse.buttons.find((button) => button.type === "right");
     mouse.press(rightButton!);
-
-    expect(mouse.status).toBe(Status.pressed);
-    expect(rightButton?.state).toBe("pressed");
+    expect(rightButton?.state).toBe(Status.pressed);
   });
 
   test("should scroll", () => {
     mouse.scroll("up", 20);
-
-    expect(mouse.status).toBe(Status.scrolling);
     expect(mouse.scrollWheel.direction).toBe("up");
     expect(mouse.scrollWheel.scrollHeight).toBe(20);
   });

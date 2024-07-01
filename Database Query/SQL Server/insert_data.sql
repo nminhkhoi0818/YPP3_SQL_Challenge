@@ -291,14 +291,14 @@ INSERT INTO order_details (id, order_id, price, source_id, source_type_id) VALUE
 (2, 1, 15, 2, 1),
 (3, 1, 12, 1, 3);
 
-CREATE TABLE Setting (
+CREATE TABLE setting (
     id INT PRIMARY KEY,
     setting_type VARCHAR(255),
     setting_name VARCHAR(255),
     setting_value INT
 );
 
-INSERT INTO Setting (id, setting_type, setting_name, setting_value) VALUES
+INSERT INTO setting (id, setting_type, setting_name, setting_value) VALUES
 (1, 'SourceType', 'course', 1),
 (2, 'SourceType', 'challenge', 2),
 (3, 'SourceType', 'program', 3),

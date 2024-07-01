@@ -17,34 +17,25 @@ class ComputerMouse {
   connectionType!: string; // wired, wireless
   status!: Status;
 
-  move(xOffset: number, yOffset: number): Position {
+  move(xOffset: number, yOffset: number) {
     this.position.x = this.position.x + xOffset;
     this.position.y = this.position.y + yOffset;
-    return this.position;
   }
 
-  click(button: Button): string {
+  click(button: Button) {
     button.click();
-    this.status = Status.clicked;
-    return this.status;
   }
 
-  doubleClick(button: Button): string {
+  doubleClick(button: Button) {
     button.doubleClick();
-    this.status = Status.doubleClicked;
-    return this.status;
   }
 
-  press(button: Button): string {
+  press(button: Button) {
     button.press();
-    this.status = Status.pressed;
-    return this.status;
   }
 
-  scroll(direction: string, scrollHeight: number = 10): string {
+  scroll(direction: string, scrollHeight: number = 10) {
     this.scrollWheel.scroll(direction, scrollHeight);
-    this.status = Status.scrolling;
-    return this.status;
   }
 
   changeMouseSpeed(speed: number) {
@@ -73,22 +64,6 @@ class ComputerMouse {
 
   adjustLightBrightness(brightness: number) {
     this.light.adjustBrightness(brightness);
-  }
-
-  openTargetObject() {
-    console.log("Open target object");
-  }
-
-  openContextMenu() {
-    console.log("Open context menu");
-  }
-
-  goToNextPage() {
-    console.log("Go to next page");
-  }
-
-  goToPreviousPage() {
-    console.log("Go to previous page");
   }
 }
 
